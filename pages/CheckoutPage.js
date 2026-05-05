@@ -13,7 +13,7 @@ export class CheckoutPage {
     // step 2
     this.finishButton = '#finish';
     this.successMessage = '.complete-header';
-    this.checkouSummaryContainer  = '.checkout_summary_container';
+    this.checkouSummaryContainer = '.checkout_summary_container';
   }
 
   async fillInformation(first, last, zip) {
@@ -23,31 +23,31 @@ export class CheckoutPage {
     await this.page.click(this.continueButton);
   }
 
-  getFirstName (){
+  getFirstName() {
     return this.page.locator(this.firstName);
   }
 
-  async cancelOrder(){
+  async cancelOrder() {
     await this.page.click(this.cancelButton);
   }
 
-  async continueToStepTwo(){
+  async continueToStepTwo() {
     await this.page.click(this.continueButton);
-  }
-
-  async finishOrder() {
-    await this.page.click(this.finishButton);
   }
 
   getSuccessMessage() {
     return this.page.locator(this.successMessage);
   }
 
-  getCheckouSummaryContainer(){
+  getCheckoutSummaryContainer() {
     return this.page.locator(this.checkouSummaryContainer);
   }
 
-  getListPrices(){
-    return this.page.locator(this.listPrices)
+  getListPrices() {
+    return this.page.locator(this.listPrices);
+  }
+
+  async finishOrder() {
+    await this.page.click(this.finishButton);
   }
 }

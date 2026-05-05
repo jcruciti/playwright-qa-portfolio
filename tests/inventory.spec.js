@@ -15,7 +15,7 @@ test.describe('inventory tests', () => {
     await login.login('standard_user', 'secret_sauce');
   });
 
-  test('should load product list', async ({ page }) => {
+  test('should display list of available products', async ({ page }) => {
     await expect(inventory.getInventoryItem()).not.toHaveCount(0);
   });
 

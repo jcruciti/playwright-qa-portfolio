@@ -4,88 +4,76 @@ import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
 
-test.describe('checkout tests', () => {
+test.describe('Checkout tests', () => {
   let inventoryPage;
   let cartPage;
   let checkoutPage;
 
   test.beforeEach(async ({ page }) => {
-    const login = new LoginPage(page);
+    const loginPage = new LoginPage(page);
+
     inventoryPage = new InventoryPage(page);
     cartPage = new CartPage(page);
     checkoutPage = new CheckoutPage(page);
 
-    await login.open();
-    await login.login('standard_user', 'secret_sauce');
+    await loginPage.open();
+    await loginPage.login('standard_user', 'secret_sauce');
 
-    //Inventory Page  => Add products
-    await inventoryPage.addProduct('sauce-labs-backpack');
-    await inventoryPage.addProduct('sauce-labs-bike-light');
-    await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
-    await inventoryPage.addProduct('test.allthethings()-t-shirt-(red)');
+    // Add products
+    const products = [
+      'sauce-labs-backpack',
+      'sauce-labs-bike-light',
+      'sauce-labs-bolt-t-shirt',
+      'test.allthethings()-t-shirt-(red)',
+    ];
 
-    //Inventory Page  => Go to cart
+    for (const product of products) {
+      await inventoryPage.addProduct(product);
+    }
+
     await inventoryPage.openCart();
-
-    //Cart Page => Proceed to checkout
     await cartPage.proceedToCheckout();
   });
 
-  test('verify calculated sum matches UI total', async ({ page }) => {
-    //Fill Information
+  test('should verify calculated sum matches UI total', async ({ page }) => {
     await checkoutPage.fillInformation('Joe', 'Cruciti', '06120-080');
 
-    const listPrices = checkoutPage.getListPrices();
+    const pricesLocator = checkoutPage.getListPrices();
 
-    // Wait for the list to become visible
-    await listPrices.first().waitFor();
+    await expect(pricesLocator.first()).toBeVisible();
 
-    //Get all prices from product list
-    const rawPrices = await listPrices.allInnerTexts();
+    const rawPrices = await pricesLocator.allInnerTexts();
 
-    //Clean the strings and convert to number
     const numericPrices = rawPrices.map((price) =>
-      parseFloat(price.replace(/[^0-9.]/g, ''))
+      Number(price.replace(/[^0-9.]/g, ''))
     );
 
-    //Sum them up
-    const totalListSum = numericPrices.reduce(
-      (accumulator, current) => accumulator + current,
-      0
-    );
-    //console.log(`The total is: ${totalListSum}`);
+    const totalListSum = numericPrices.reduce((sum, value) => sum + value, 0);
 
-    const rawTotalPriceUi = await page
+    const rawTotal = await page
       .locator('.summary_subtotal_label')
       .textContent();
 
-    //clean string and convert
-    const totalPriceUi = parseFloat(rawTotalPriceUi.replace(/[^0-9.]/g, ''));
-    //console.log("priceTotalUI=" + totalPriceUi);
+    const totalUi = Number(rawTotal?.replace(/[^0-9.]/g, ''));
 
-    //Verify if the Item total(UI) matches the list summed pices
-    expect(totalListSum).toBeCloseTo(totalPriceUi);
+    expect(totalListSum).toBeCloseTo(totalUi);
   });
 
   test('should navigate back to cart page from checkout', async ({ page }) => {
-    //Cancel Order
     await checkoutPage.cancelOrder();
 
-    //Validate navigation
     await expect(page).toHaveURL(/cart/);
     await expect(cartPage.getCartTitle()).toBeVisible();
   });
 
-  test('should navigate to checkou step two', async ({ page }) => {
-    //Fill Information
+  test('should navigate to checkout step two', async ({ page }) => {
     await checkoutPage.fillInformation('Joe', 'Cruciti', '06120-080');
 
-    //Validate navigation
     await expect(page).toHaveURL(/checkout-step-two/);
-    await expect(checkoutPage.getCheckouSummaryContainer()).toBeVisible();
+    await expect(checkoutPage.getCheckoutSummaryContainer()).toBeVisible();
   });
 
-  test.describe('Checkout - required fields', () => {
+  test.describe('Checkout required fields validation', () => {
     const cases = [
       {
         field: 'First Name',
@@ -112,8 +100,6 @@ test.describe('checkout tests', () => {
 
     for (const data of cases) {
       test(`should validate ${data.field} is required`, async ({ page }) => {
-        const checkoutPage = new CheckoutPage(page);
-
         await checkoutPage.fillInformation(
           data.firstName,
           data.lastName,
@@ -122,12 +108,31 @@ test.describe('checkout tests', () => {
 
         await checkoutPage.continueToStepTwo();
 
-        const errorButton = page.locator('[data-test="error-button"]');
+        const error = page.locator('[data-test="error"]');
 
-        await expect(errorButton).toBeVisible();
-        console.log(data.message);
-        await expect(errorButton).toContainText(data.message);
+        await expect(error).toBeVisible();
+        await expect(error).toHaveText(data.message);
       });
     }
+  });
+
+  test('should redirect to shopping cart', async ({ page }) => {
+    await inventoryPage.openCart();
+
+    //Validate navigation
+    await expect(page).toHaveURL(/cart/);
+    await expect(cartPage.getCartTitle()).toBeVisible();
+  });
+
+  test('should finish the order', async ({ page }) => {
+    await checkoutPage.fillInformation('Joe', 'Cruciti', '06120-080');
+
+    await checkoutPage.finishOrder();
+
+    const checkoutComplete = page.locator('[data-test="title"]');
+    await expect(checkoutComplete).toBeVisible;
+    await expect(checkoutComplete).toHaveText('Checkout: Complete!');
+
+    await expect(page).toHaveURL(/checkout-complete/);
   });
 });
