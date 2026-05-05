@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { expectSortedText } from '../utils/assertSorted';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
@@ -81,13 +82,21 @@ test.describe('inventory tests', () => {
     await expect(inventoryAfterLogin.getCartBadge()).toHaveText('1');
   });
 
-  test.skip('should sorting to shopping cart page works correctly', async ({
-    page,
-  }) => {
-    const itenName = await page
-      .locator('.inventory_item_name')
-      .allTextContents();
+  test('should sort products A to Z correctly', async ({ page }) => {
+    const items = page.locator(inventory.getInventoryItemName());
 
-    //Name A to Z
+    await expectSortedText(items, 'asc');
+  });
+
+  test('should sort products Z to A correctly', async ({ page }) => {
+    const items = page.locator(inventory.getInventoryItemName());
+
+    await expectSortedText(items, 'desc');
+  });
+
+  test('should sort prices low to high', async ({ page }) => {
+    const prices = page.locator(inventory.getInventoryItemName());
+
+    await expectSortedNumbers(prices, 'asc');
   });
 });

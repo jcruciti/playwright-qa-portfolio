@@ -12,6 +12,7 @@ export class InventoryPage {
     this.menuButton = '#react-burger-menu-btn';
     this.inventoryList = '.inventory_list';
     this.inventoryItem = '.inventory_item';
+    this.inventoryItemName = '.inventory_item_name';
   }
 
   async addProduct(productId) {
@@ -38,6 +39,10 @@ export class InventoryPage {
     return this.page.locator(this.inventoryItem);
   }
 
+  getInventoryItemName() {
+    return this.page.locator(this.inventoryItemName);
+  }
+
   async openCart() {
     await this.page.click(this.cartIcon);
   }
@@ -46,7 +51,7 @@ export class InventoryPage {
     return this.page.locator(this.cartBadge);
   }
 
-  async openMenu(){
+  async openMenu() {
     return this.page.click(this.menuButton);
   }
 }
