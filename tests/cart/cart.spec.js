@@ -4,7 +4,7 @@ import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
 
-test.describe('shopping cart tests', () => {
+test.describe('Shopping Cart', () => {
   let inventoryPage;
   let cartPage;
 
