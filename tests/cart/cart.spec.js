@@ -1,92 +1,90 @@
-import {test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
-import { CartPage } from '../../pages/CartPage'; 
+import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
 
-
 test.describe('shopping cart tests', () => {
+  let inventoryPage;
+  let cartPage;
 
-    let inventoryPage;
-    let cartPage;
+  test.beforeEach(async ({ page }) => {
+    const login = new LoginPage(page);
+    inventoryPage = new InventoryPage(page);
+    cartPage = new CartPage(page);
 
-    test.beforeEach(async ({ page }) => {
-        const login = new LoginPage(page);
-        inventoryPage = new InventoryPage(page);
-        cartPage = new CartPage(page);
+    await login.open();
+    await login.login(process.env.USER, process.env.PASSWORD);
+  });
 
-        await login.open();
-        await login.login('standard_user', 'secret_sauce');
-    });
+  test('the quantity of products on the list should match the cart badge', async () => {
+    //Add product
+    await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
+    await inventoryPage.openCart();
 
-    
-    test('the quantity of products on the list should match the cart badge', async () =>{
-        //Add product
-        await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
-        await inventoryPage.openCart();
-        
-        await expect(cartPage.getCartItems()).toHaveCount(1);
-        //Count
-        const itemsCount = await cartPage.getCartItems().count();
+    await expect(cartPage.getCartItems()).toHaveCount(1);
+    //Count
+    const itemsCount = await cartPage.getCartItems().count();
 
-        //Validate
-        await expect(cartPage.getCartBadge()).toHaveText(`${itemsCount}`);
-    });
+    //Validate
+    await expect(cartPage.getCartBadge()).toHaveText(`${itemsCount}`);
+  });
 
-    test('should remove product from cart', async () => {
-        //Add products
-        await inventoryPage.addProduct('sauce-labs-backpack');
-        await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
+  test('should remove product from cart', async () => {
+    //Add products
+    await inventoryPage.addProduct('sauce-labs-backpack');
+    await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
 
-        //Go to Cart Page
-        await inventoryPage.openCart();
+    //Go to Cart Page
+    await inventoryPage.openCart();
 
-        //Remove product from the list
-        await cartPage.removeProduct('sauce-labs-backpack');
+    //Remove product from the list
+    await cartPage.removeProduct('sauce-labs-backpack');
 
-       //Count
-        const itemsCount = await cartPage.getCartItems().count();
+    //Count
+    const itemsCount = await cartPage.getCartItems().count();
 
-        //Validate list size matches badge number
-        await expect(cartPage.getCartBadge()).toHaveText(String(itemsCount));
-        
-        //Product is not on the list anymore
-        await expect(cartPage.getCartItems()).not.toContainText('sauce-labs-backpack');
-    });
+    //Validate list size matches badge number
+    await expect(cartPage.getCartBadge()).toHaveText(String(itemsCount));
 
-    test('should navigate back to inventory page from cart', async ({page}) =>{
-        //Go to Cart 
-        await inventoryPage.openCart();
+    //Product is not on the list anymore
+    await expect(cartPage.getCartItems()).not.toContainText(
+      'sauce-labs-backpack'
+    );
+  });
 
-        //Click continue shopping
-        await cartPage.continueShopping();
+  test('should navigate back to inventory page from cart', async ({ page }) => {
+    //Go to Cart
+    await inventoryPage.openCart();
 
-        //Validate navigation
-        await expect(page).toHaveURL(/inventory/);
-        await expect(inventoryPage.getInventoryList()).toBeVisible();
-    });
+    //Click continue shopping
+    await cartPage.continueShopping();
 
-    test('should go to checkout page', async ({page}) => {
-        const checkoutPage = new CheckoutPage(page);
+    //Validate navigation
+    await expect(page).toHaveURL(/inventory/);
+    await expect(inventoryPage.getInventoryList()).toBeVisible();
+  });
 
-        // Add product first
-        await inventoryPage.addProduct('sauce-labs-backpack');
+  test('should go to checkout page', async ({ page }) => {
+    const checkoutPage = new CheckoutPage(page);
 
-        // Go to cart
-        await inventoryPage.openCart();
+    // Add product first
+    await inventoryPage.addProduct('sauce-labs-backpack');
 
-        // Proceed to checkout
-        await cartPage.proceedToCheckout();
+    // Go to cart
+    await inventoryPage.openCart();
 
-        // Validate navigation
-        await expect(page).toHaveURL(/checkout-step-one/);
-        await expect(checkoutPage.getFirstName()).toBeVisible();
-    });
+    // Proceed to checkout
+    await cartPage.proceedToCheckout();
 
-    test('should show empty cart when no items are added', async () => {
-        await inventoryPage.openCart();
+    // Validate navigation
+    await expect(page).toHaveURL(/checkout-step-one/);
+    await expect(checkoutPage.getFirstName()).toBeVisible();
+  });
 
-        await expect(cartPage.getCartItems()).toHaveCount(0);
-    });
+  test('should show empty cart when no items are added', async () => {
+    await inventoryPage.openCart();
 
+    await expect(cartPage.getCartItems()).toHaveCount(0);
+  });
 });

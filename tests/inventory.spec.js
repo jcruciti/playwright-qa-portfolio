@@ -13,7 +13,7 @@ test.describe('inventory tests', () => {
     inventory = new InventoryPage(page);
 
     await login.open();
-    await login.login('standard_user', 'secret_sauce');
+    await login.login(process.env.USER, process.env.PASSWORD);
   });
 
   test('should display list of available products', async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe('inventory tests', () => {
 
     // New session
     await login.open();
-    await login.login('standard_user', 'secret_sauce');
+    await login.login(process.env.USER, process.env.PASSWORD);
 
     const inventoryAfterLogin = new InventoryPage(page);
 

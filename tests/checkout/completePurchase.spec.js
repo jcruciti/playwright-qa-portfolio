@@ -12,7 +12,7 @@ test('complete purchase flow', async ({ page }) => {
 
   // Login
   await login.open();
-  await login.login('standard_user', 'secret_sauce');
+  await login.login(process.env.USER, process.env.PASSWORD);
 
   // Add product
   await inventory.addProduct('sauce-labs-backpack');

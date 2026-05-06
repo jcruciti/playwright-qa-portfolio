@@ -17,7 +17,7 @@ test.describe('Checkout tests', () => {
     checkoutPage = new CheckoutPage(page);
 
     await loginPage.open();
-    await loginPage.login('standard_user', 'secret_sauce');
+    await loginPage.login(process.env.USER, process.env.PASSWORD);
 
     // Add products
     const products = [
