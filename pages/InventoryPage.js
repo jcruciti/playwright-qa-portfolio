@@ -4,9 +4,7 @@ export class InventoryPage {
 
     this.productTitle = '.title';
     this.cartBadge = '.shopping_cart_badge';
-    // this.addToCartButton = (productId) => `#add-to-cart-${productId}`;
     this.addToCartButton = (productId) => `[id="add-to-cart-${productId}"]`;
-    // this.removeButton = (productId) => `#remove-${productId}`;
     this.removeButton = (productId) => `[id="remove-${productId}"]`;
     this.cartIcon = '.shopping_cart_link';
     this.menuButton = '#react-burger-menu-btn';

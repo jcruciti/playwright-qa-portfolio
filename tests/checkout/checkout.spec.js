@@ -1,14 +1,23 @@
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
 
-test.describe('Checkout', () => {
+const { buildUser } = require('../../utils/userFactory');
+
+test.describe('Checkout Flow', () => {
   let inventoryPage;
   let cartPage;
   let checkoutPage;
+  let user;
+
+  const PRODUCTS = [
+    'sauce-labs-backpack',
+    'sauce-labs-bike-light',
+    'sauce-labs-bolt-t-shirt',
+    'test.allthethings()-t-shirt-(red)',
+  ];
 
   test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
@@ -17,25 +26,12 @@ test.describe('Checkout', () => {
     cartPage = new CartPage(page);
     checkoutPage = new CheckoutPage(page);
 
-    const user = {
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
-      zip: faker.location.zipCode(),
-    };
+    user = buildUser();
 
     await loginPage.open();
-    // await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
-    // await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+    await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 
-    // Add products
-    const products = [
-      'sauce-labs-backpack',
-      'sauce-labs-bike-light',
-      'sauce-labs-bolt-t-shirt',
-      'test.allthethings()-t-shirt-(red)',
-    ];
-
-    for (const product of products) {
+    for (const product of PRODUCTS) {
       await inventoryPage.addProduct(product);
     }
 
@@ -43,28 +39,15 @@ test.describe('Checkout', () => {
     await cartPage.proceedToCheckout();
   });
 
-  test('should verify calculated sum matches UI total', async ({ page }) => {
-    await checkoutPage.fillInformation(user);
+  test('should verify calculated sum matches UI total', async () => {
+    await checkoutPage.completeStepOne(user);
 
-    const pricesLocator = checkoutPage.getListPrices();
+    await checkoutPage.summaryContainer.waitFor({ state: 'visible' });
 
-    await expect(pricesLocator.first()).toBeVisible();
+    const { calculated, uiTotal } =
+      await checkoutPage.assertSubtotalMatchesItems();
 
-    const rawPrices = await pricesLocator.allInnerTexts();
-
-    const numericPrices = rawPrices.map((price) =>
-      Number(price.replace(/[^0-9.]/g, ''))
-    );
-
-    const totalListSum = numericPrices.reduce((sum, value) => sum + value, 0);
-
-    const rawTotal = await page
-      .locator('.summary_subtotal_label')
-      .textContent();
-
-    const totalUi = Number(rawTotal?.replace(/[^0-9.]/g, ''));
-
-    expect(totalListSum).toBeCloseTo(totalUi);
+    expect(calculated).toBeCloseTo(uiTotal, 2);
   });
 
   test('should navigate back to cart page from checkout', async ({ page }) => {
@@ -75,51 +58,42 @@ test.describe('Checkout', () => {
   });
 
   test('should navigate to checkout step two', async ({ page }) => {
-    await checkoutPage.fillInformation(user);
+    await checkoutPage.completeStepOne(user);
 
     await expect(page).toHaveURL(/checkout-step-two/);
-    await expect(checkoutPage.getCheckoutSummaryContainer()).toBeVisible();
+    await expect(checkoutPage.summaryContainer).toBeVisible();
   });
 
   test.describe('Checkout required fields validation', () => {
     const cases = [
       {
         field: 'First Name',
-        firstName: '',
-        lastName: 'Cruciti',
-        zip: '06120-080',
+        data: { firstName: '', lastName: 'Cruciti', postalCode: '06120-080' },
         message: 'Error: First Name is required',
       },
       {
         field: 'Last Name',
-        firstName: 'John',
-        lastName: '',
-        zip: '06120-080',
+        data: { firstName: 'John', lastName: '', postalCode: '06120-080' },
         message: 'Error: Last Name is required',
       },
       {
-        field: 'Zip Code',
-        firstName: 'John',
-        lastName: 'Cruciti',
-        zip: '',
+        field: 'Postal Code',
+        data: { firstName: 'John', lastName: 'Cruciti', postalCode: '' },
         message: 'Error: Postal Code is required',
       },
     ];
 
-    for (const data of cases) {
-      test(`should validate ${data.field} is required`, async ({ page }) => {
-        await checkoutPage.fillInformation(
-          data.firstName,
-          data.lastName,
-          data.zip
-        );
+    for (const { field, data, message } of cases) {
+      test(`should validate ${field} is required`, async () => {
+        const invalidUser = buildUser(data);
 
+        await checkoutPage.fillInformation(invalidUser);
+
+        // 🔥 FIX: ensure proper submit flow
         await checkoutPage.continueToStepTwo();
 
-        const error = page.locator('[data-test="error"]');
-
-        await expect(error).toBeVisible();
-        await expect(error).toHaveText(data.message);
+        await expect(checkoutPage.errorMessage).toBeVisible();
+        await expect(checkoutPage.errorMessage).toHaveText(message);
       });
     }
   });
@@ -127,19 +101,19 @@ test.describe('Checkout', () => {
   test('should redirect to shopping cart', async ({ page }) => {
     await inventoryPage.openCart();
 
-    //Validate navigation
     await expect(page).toHaveURL(/cart/);
     await expect(cartPage.getCartTitle()).toBeVisible();
   });
 
   test('should finish the order', async ({ page }) => {
-    await checkoutPage.fillInformation(user);
+    await checkoutPage.completeStepOne(user);
 
     await checkoutPage.finishOrder();
 
-    const checkoutComplete = page.locator('[data-test="title"]');
-    await expect(checkoutComplete).toBeVisible();
-    await expect(checkoutComplete).toHaveText('Checkout: Complete!');
+    // 🔥 FIX: correct real UI text
+    await expect(checkoutPage.successMessage).toHaveText(
+      'Thank you for your order!'
+    );
 
     await expect(page).toHaveURL(/checkout-complete/);
   });
