@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
@@ -10,9 +11,15 @@ test('complete purchase flow', async ({ page }) => {
   const cart = new CartPage(page);
   const checkout = new CheckoutPage(page);
 
+  const user = {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    zip: faker.location.zipCode(),
+  };
+
   // Login
   await login.open();
-  await login.login(process.env.USER, process.env.PASSWORD);
+  await login.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 
   // Add product
   await inventory.addProduct('sauce-labs-backpack');
@@ -22,7 +29,7 @@ test('complete purchase flow', async ({ page }) => {
   await cart.proceedToCheckout();
 
   // Checkout step 1
-  await checkout.fillInformation('John', 'Doe', '12345');
+  await checkout.fillInformation(user);
 
   // Finish
   await checkout.finishOrder();

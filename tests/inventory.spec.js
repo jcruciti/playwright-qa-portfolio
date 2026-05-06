@@ -1,19 +1,21 @@
 import { test, expect } from '@playwright/test';
-import { expectSortedText } from '../utils/assertSorted';
+import { expectSortedText, expectSortedNumbers } from '../utils/assertSorted';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
 
-test.describe('inventory tests', () => {
+test.describe('Inventory', () => {
   let login;
   let inventory;
+  const user = process.env.SAUCE_USER;
+  const pass = process.env.SAUCE_PASSWORD;
 
   test.beforeEach(async ({ page }) => {
     login = new LoginPage(page);
     inventory = new InventoryPage(page);
 
     await login.open();
-    await login.login(process.env.USER, process.env.PASSWORD);
+    await login.login(user, pass);
   });
 
   test('should display list of available products', async ({ page }) => {
@@ -74,7 +76,7 @@ test.describe('inventory tests', () => {
 
     // New session
     await login.open();
-    await login.login(process.env.USER, process.env.PASSWORD);
+    await login.login(user, pass);
 
     const inventoryAfterLogin = new InventoryPage(page);
 
@@ -83,20 +85,42 @@ test.describe('inventory tests', () => {
   });
 
   test('should sort products A to Z correctly', async ({ page }) => {
-    const items = inventory.getInventoryItemName();
+    //Sort by A to Z
+    await inventory.sortBy('az');
 
-    await expectSortedText(items, 'asc');
+    const itemsLocator = inventory.getInventoryItem();
+    await expect(itemsLocator.first()).toBeVisible();
+
+    await expectSortedText(itemsLocator, 'asc');
   });
 
   test('should sort products Z to A correctly', async ({ page }) => {
-    const items = inventory.getInventoryItemName();
+    //Sort by Z to A
+    await inventory.sortBy('za');
 
-    await expectSortedText(items, 'desc');
+    const itemsLocator = inventory.getInventoryItem();
+    await expect(itemsLocator.first()).toBeVisible();
+
+    await expectSortedText(itemsLocator, 'desc');
   });
 
   test('should sort prices low to high', async ({ page }) => {
-    const prices = inventory.getInventoryItemName();
+    //Sort by Low to High
+    await inventory.sortBy('lohi');
 
-    await expectSortedNumbers(prices, 'asc');
+    const itemsLocator = inventory.getInventoryItem();
+    await expect(itemsLocator.first()).toBeVisible();
+
+    await expectSortedNumbers(itemsLocator, 'asc');
+  });
+
+  test('should sort prices high to low', async ({ page }) => {
+    //Sort by High to Low
+    await inventory.sortBy('hilo');
+
+    const itemsLocator = inventory.getInventoryItem();
+    await expect(itemsLocator.first()).toBeVisible();
+
+    await expectSortedNumbers(itemsLocator, 'desc');
   });
 });

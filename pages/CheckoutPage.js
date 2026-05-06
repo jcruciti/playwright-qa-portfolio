@@ -16,10 +16,10 @@ export class CheckoutPage {
     this.checkoutSummaryContainer = '.checkout_summary_container';
   }
 
-  async fillInformation(first, last, zip) {
-    await this.page.fill(this.firstName, first);
-    await this.page.fill(this.lastName, last);
-    await this.page.fill(this.postalCode, zip);
+  async fillInformation(user) {
+    await this.page.fill(this.firstName, user.firstName);
+    await this.page.fill(this.lastName, user.lastName);
+    await this.page.fill(this.postalCode, user.zip);
     await this.page.click(this.continueButton);
   }
 

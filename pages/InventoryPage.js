@@ -11,8 +11,9 @@ export class InventoryPage {
     this.cartIcon = '.shopping_cart_link';
     this.menuButton = '#react-burger-menu-btn';
     this.inventoryList = '.inventory_list';
-    this.inventoryItem = '.inventory_item';
+    this.inventoryItem = '[data-test="inventory-item"]';
     this.inventoryItemName = '.inventory_item_name';
+    this.productSortSelect = '[data-test="product-sort-container"]';
   }
 
   async addProduct(productId) {
@@ -53,5 +54,9 @@ export class InventoryPage {
 
   async openMenu() {
     return this.page.click(this.menuButton);
+  }
+
+  sortBy(sort) {
+    return this.page.locator(this.productSortSelect).selectOption(sort);
   }
 }

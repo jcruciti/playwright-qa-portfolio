@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
@@ -16,8 +17,15 @@ test.describe('Checkout tests', () => {
     cartPage = new CartPage(page);
     checkoutPage = new CheckoutPage(page);
 
+    const user = {
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      zip: faker.location.zipCode(),
+    };
+
     await loginPage.open();
-    await loginPage.login(process.env.USER, process.env.PASSWORD);
+    // await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+    // await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 
     // Add products
     const products = [
@@ -36,7 +44,7 @@ test.describe('Checkout tests', () => {
   });
 
   test('should verify calculated sum matches UI total', async ({ page }) => {
-    await checkoutPage.fillInformation('Joe', 'Cruciti', '06120-080');
+    await checkoutPage.fillInformation(user);
 
     const pricesLocator = checkoutPage.getListPrices();
 
@@ -67,7 +75,7 @@ test.describe('Checkout tests', () => {
   });
 
   test('should navigate to checkout step two', async ({ page }) => {
-    await checkoutPage.fillInformation('Joe', 'Cruciti', '06120-080');
+    await checkoutPage.fillInformation(user);
 
     await expect(page).toHaveURL(/checkout-step-two/);
     await expect(checkoutPage.getCheckoutSummaryContainer()).toBeVisible();
@@ -125,7 +133,7 @@ test.describe('Checkout tests', () => {
   });
 
   test('should finish the order', async ({ page }) => {
-    await checkoutPage.fillInformation('Joe', 'Cruciti', '06120-080');
+    await checkoutPage.fillInformation(user);
 
     await checkoutPage.finishOrder();
 

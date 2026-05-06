@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 require('dotenv').config();
-
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -9,7 +8,6 @@ require('dotenv').config();
 // import dotenv from 'dotenv';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
-require('dotenv').config();
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {

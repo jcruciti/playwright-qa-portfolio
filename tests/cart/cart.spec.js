@@ -14,7 +14,7 @@ test.describe('shopping cart tests', () => {
     cartPage = new CartPage(page);
 
     await login.open();
-    await login.login(process.env.USER, process.env.PASSWORD);
+    await login.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
   });
 
   test('the quantity of products on the list should match the cart badge', async () => {

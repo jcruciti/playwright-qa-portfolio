@@ -10,7 +10,7 @@ test.describe('Login Tests', () => {
 
   test('should login succesfully with valid credentials', async ({ page }) => {
     await loginPage.open();
-    await loginPage.login(process.env.USER, process.env.PASSWORD);
+    await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 
     await expect(page).toHaveURL(/inventory/);
   });

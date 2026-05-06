@@ -13,11 +13,14 @@ export async function expectSortedText(locator, order = 'asc') {
 }
 
 export async function expectSortedNumbers(locator, order = 'asc') {
-  const values = await locator.allTextContents();
+  const rawValues = await locator.allTextContents();
 
-  const numbers = values.map((v) => Number(v.replace(/[^0-9.]/g, '')));
+  const prices = rawValues.map((text) => {
+    const match = text.match(/\$(\d+\.\d+)/);
+    return match ? parseFloat(match[1]) : 0;
+  });
 
-  const sorted = [...numbers].sort((a, b) => (order === 'asc' ? a - b : b - a));
+  const sorted = [...prices].sort((a, b) => (order === 'asc' ? a - b : b - a));
 
-  expect(numbers).toEqual(sorted);
+  expect(prices).toEqual(sorted);
 }
