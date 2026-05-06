@@ -130,7 +130,7 @@ test.describe('Checkout tests', () => {
     await checkoutPage.finishOrder();
 
     const checkoutComplete = page.locator('[data-test="title"]');
-    await expect(checkoutComplete).toBeVisible;
+    await expect(checkoutComplete).toBeVisible();
     await expect(checkoutComplete).toHaveText('Checkout: Complete!');
 
     await expect(page).toHaveURL(/checkout-complete/);

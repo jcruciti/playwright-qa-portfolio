@@ -83,19 +83,19 @@ test.describe('inventory tests', () => {
   });
 
   test('should sort products A to Z correctly', async ({ page }) => {
-    const items = page.locator(inventory.getInventoryItemName());
+    const items = inventory.getInventoryItemName();
 
     await expectSortedText(items, 'asc');
   });
 
   test('should sort products Z to A correctly', async ({ page }) => {
-    const items = page.locator(inventory.getInventoryItemName());
+    const items = inventory.getInventoryItemName();
 
     await expectSortedText(items, 'desc');
   });
 
   test('should sort prices low to high', async ({ page }) => {
-    const prices = page.locator(inventory.getInventoryItemName());
+    const prices = inventory.getInventoryItemName();
 
     await expectSortedNumbers(prices, 'asc');
   });

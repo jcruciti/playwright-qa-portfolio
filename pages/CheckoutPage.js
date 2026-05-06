@@ -13,7 +13,7 @@ export class CheckoutPage {
     // step 2
     this.finishButton = '#finish';
     this.successMessage = '.complete-header';
-    this.checkouSummaryContainer = '.checkout_summary_container';
+    this.checkoutSummaryContainer = '.checkout_summary_container';
   }
 
   async fillInformation(first, last, zip) {
@@ -40,7 +40,7 @@ export class CheckoutPage {
   }
 
   getCheckoutSummaryContainer() {
-    return this.page.locator(this.checkouSummaryContainer);
+    return this.page.locator(this.checkoutSummaryContainer);
   }
 
   getListPrices() {
