@@ -274,7 +274,7 @@ This helps avoid hardcoded test data and improves test reliability.
 
 # 👨‍💻 Author
 
-**Gabriel Cruciti**
+**Joe Cruciti**
 
 QA Automation Portfolio Project
 
