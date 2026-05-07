@@ -110,7 +110,6 @@ test.describe('Checkout Flow', () => {
 
     await checkoutPage.finishOrder();
 
-    // 🔥 FIX: correct real UI text
     await expect(checkoutPage.successMessage).toHaveText(
       'Thank you for your order!'
     );
