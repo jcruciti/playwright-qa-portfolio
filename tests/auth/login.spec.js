@@ -21,6 +21,6 @@ test.describe('Login', () => {
     await loginPage.open();
     await loginPage.login('error_user', 'inv@l!d');
 
-    await expect(page.locator('[data-test="error"]')).toBeVisible();
+    await expect(loginPage.getErrorMessage()).toBeVisible();
   });
 });

@@ -8,6 +8,13 @@ test.describe('Shopping Cart', () => {
   let inventoryPage;
   let cartPage;
 
+  const PRODUCTS = [
+    'sauce-labs-backpack',
+    'sauce-labs-bike-light',
+    'sauce-labs-bolt-t-shirt',
+    'test.allthethings()-t-shirt-(red)',
+  ];
+
   test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
     inventoryPage = new InventoryPage(page);
@@ -18,12 +25,15 @@ test.describe('Shopping Cart', () => {
   });
 
   test('the quantity of products on the list should match the cart badge', async () => {
-    //Add product
-    await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
+    //Add products
+    for (const product of PRODUCTS) {
+      await inventoryPage.addProduct(product);
+    }
+
     await inventoryPage.openCart();
 
-    await expect(cartPage.getCartItems()).toHaveCount(1);
-    //Count
+    await expect(cartPage.getCartItems()).toHaveCount(4);
+
     const itemsCount = await cartPage.getCartItems().count();
 
     //Validate
@@ -31,26 +41,36 @@ test.describe('Shopping Cart', () => {
   });
 
   test('should remove product from cart', async () => {
-    //Add products
-    await inventoryPage.addProduct('sauce-labs-backpack');
-    await inventoryPage.addProduct('sauce-labs-bolt-t-shirt');
+    const productToRemove = 'test.allthethings()-t-shirt-(red)';
 
-    //Go to Cart Page
+    const removedProductName = 'Test.allTheThings() T-Shirt (Red)';
+
+    const expectedCount = PRODUCTS.length - 1;
+
+    // Add products
+    for (const product of PRODUCTS) {
+      await inventoryPage.addProduct(product);
+    }
+
+    // Open cart
     await inventoryPage.openCart();
 
-    //Remove product from the list
-    await cartPage.removeProduct('sauce-labs-backpack');
+    // Validate initial cart state
+    await expect(cartPage.getCartItems()).toHaveCount(PRODUCTS.length);
 
-    //Count
-    const itemsCount = await cartPage.getCartItems().count();
+    await expect(cartPage.getCartBadge()).toHaveText(String(PRODUCTS.length));
 
-    //Validate list size matches badge number
-    await expect(cartPage.getCartBadge()).toHaveText(String(itemsCount));
+    // Remove product
+    await cartPage.removeProduct(productToRemove);
 
-    //Product is not on the list anymore
-    await expect(cartPage.getCartItems()).not.toContainText(
-      'sauce-labs-backpack'
-    );
+    // Validate badge count updated
+    await expect(cartPage.getCartBadge()).toHaveText(String(expectedCount));
+
+    // Validate removed product no longer exists
+    await expect(cartPage.getCartItemByName(removedProductName)).toHaveCount(0);
+
+    // Validate final cart state
+    await expect(cartPage.getCartItems()).toHaveCount(expectedCount);
   });
 
   test('should navigate back to inventory page from cart', async ({ page }) => {
@@ -68,8 +88,10 @@ test.describe('Shopping Cart', () => {
   test('should go to checkout page', async ({ page }) => {
     const checkoutPage = new CheckoutPage(page);
 
-    // Add product first
-    await inventoryPage.addProduct('sauce-labs-backpack');
+    // Add products
+    for (const product of PRODUCTS) {
+      await inventoryPage.addProduct(product);
+    }
 
     // Go to cart
     await inventoryPage.openCart();

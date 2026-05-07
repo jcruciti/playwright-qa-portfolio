@@ -6,6 +6,7 @@ export class LoginPage {
     this.passwordInput = '#password';
     this.loginButton = '#login-button';
     this.logoutButton = '#logout_sidebar_link';
+    this.errorMessage = '[data-test="error"]';
   }
 
   async open() {
@@ -18,7 +19,11 @@ export class LoginPage {
     await this.page.click(this.loginButton);
   }
 
-  async logout(){
+  async logout() {
     await this.page.click(this.logoutButton);
+  }
+
+  getErrorMessage() {
+    return this.page.locator(this.errorMessage);
   }
 }

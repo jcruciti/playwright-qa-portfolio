@@ -4,10 +4,13 @@ export class CartPage {
 
     this.cartBadge = '.shopping_cart_badge';
     this.cartItems = '.cart_item';
+    this.cartItemNames = '.inventory_item_name';
+
     this.cartTitle = '[data-test="title"]';
     this.checkoutButton = '#checkout';
     this.continueShoppingButton = '#continue-shopping';
-    this.removeButton = (productId) => `#remove-${productId}`;
+
+    this.removeButton = (productId) => `[id="remove-${productId}"]`;
   }
 
   getCartBadge() {
@@ -16,6 +19,16 @@ export class CartPage {
 
   getCartItems() {
     return this.page.locator(this.cartItems);
+  }
+
+  getCartItemNames() {
+    return this.page.locator(this.cartItemNames);
+  }
+
+  getCartItemByName(name) {
+    return this.page.locator(this.cartItemNames, {
+      hasText: name,
+    });
   }
 
   getCartTitle() {
