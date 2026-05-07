@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
+const { buildUser } = require('../../utils/userFactory');
 
 test('complete purchase flow', async ({ page }) => {
   const login = new LoginPage(page);
@@ -11,11 +11,7 @@ test('complete purchase flow', async ({ page }) => {
   const cart = new CartPage(page);
   const checkout = new CheckoutPage(page);
 
-  const user = {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    zip: faker.location.zipCode(),
-  };
+  const user = buildUser();
 
   // Login
   await login.open();
@@ -29,13 +25,11 @@ test('complete purchase flow', async ({ page }) => {
   await cart.proceedToCheckout();
 
   // Checkout step 1
-  await checkout.fillInformation(user);
+  await checkout.completeStepOne(user);
 
-  // Finish
   await checkout.finishOrder();
 
-  // Assertion
-  await expect(await checkout.getSuccessMessage()).toHaveText(
-    'Thank you for your order!'
-  );
+  await expect(checkout.successMessage).toHaveText('Thank you for your order!');
+
+  await expect(page).toHaveURL(/checkout-complete/);
 });

@@ -4,13 +4,13 @@ export class CartPage {
 
     this.cartBadge = '.shopping_cart_badge';
     this.cartItems = '.cart_item';
-    this.cartTitle = '.title';
+    this.cartTitle = '[data-test="title"]';
     this.checkoutButton = '#checkout';
     this.continueShoppingButton = '#continue-shopping';
     this.removeButton = (productId) => `#remove-${productId}`;
   }
 
-  getCartBadge(){
+  getCartBadge() {
     return this.page.locator(this.cartBadge);
   }
 
@@ -18,7 +18,7 @@ export class CartPage {
     return this.page.locator(this.cartItems);
   }
 
-  getCartTitle(){
+  getCartTitle() {
     return this.page.locator(this.cartTitle);
   }
 

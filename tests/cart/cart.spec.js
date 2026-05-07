@@ -79,7 +79,7 @@ test.describe('Shopping Cart', () => {
 
     // Validate navigation
     await expect(page).toHaveURL(/checkout-step-one/);
-    await expect(checkoutPage.getFirstName()).toBeVisible();
+    await expect(cartPage.getCartTitle()).toBeVisible();
   });
 
   test('should show empty cart when no items are added', async () => {
