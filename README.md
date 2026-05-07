@@ -70,9 +70,6 @@ Login → Add product → Cart → Checkout → Order confirmation
 # 🏗️ Project Structure
 
 ```bash
-# 🏗️ Project Structure
-
-```bash
 PLAYWRIGHT-QA-PORTFOLIO
 │
 ├── pages/
