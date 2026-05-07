@@ -70,7 +70,6 @@ Login → Add product → Cart → Checkout → Order confirmation
 # 🏗️ Project Structure
 
 ```bash
-<code>
 # 🏗️ Project Structure
 
 ```bash
@@ -115,8 +114,6 @@ PLAYWRIGHT-QA-PORTFOLIO
 ├── playwright.config.js
 └── README.md
 ```
-```
-</code>
 ---
 
 # ⚙️ Setup & Installation
