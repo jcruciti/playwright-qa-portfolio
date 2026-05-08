@@ -1,50 +1,55 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
 
 const { buildUser } = require('../../utils/userFactory');
 
-test('should complete purchase flow successfully', async ({ page }) => {
-  const login = new LoginPage(page);
-  const inventory = new InventoryPage(page);
-  const cart = new CartPage(page);
-  const checkout = new CheckoutPage(page);
+test.describe('Complete Purchase Flow', () => {
+  let inventoryPage;
+  let cartPage;
+  let checkoutPage;
+  let user;
 
-  const user = buildUser();
+  test.beforeEach(async ({ page }) => {
+    inventoryPage = new InventoryPage(page);
+    cartPage = new CartPage(page);
+    checkoutPage = new CheckoutPage(page);
 
-  await test.step('Login with valid credentials', async () => {
-    await login.open();
-    await login.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+    user = buildUser();
 
-    await expect(page).toHaveURL(/inventory/);
+    await page.goto('/inventory.html');
   });
 
-  await test.step('Add products to cart', async () => {
-    await inventory.addProduct('sauce-labs-backpack');
+  test('should complete purchase flow successfully', async ({ page }) => {
+    await test.step('Add product to cart', async () => {
+      await inventoryPage.addProduct('sauce-labs-backpack');
 
-    await expect(inventory.getCartBadge()).toHaveText('1');
-  });
+      await expect(inventoryPage.getCartBadge()).toHaveText('1');
+    });
 
-  await test.step('Proceed to checkout', async () => {
-    await inventory.openCart();
-    await cart.proceedToCheckout();
+    await test.step('Open cart and proceed to checkout', async () => {
+      await inventoryPage.openCart();
 
-    await expect(page).toHaveURL(/checkout-step-one/);
-  });
+      await cartPage.proceedToCheckout();
 
-  await test.step('Fill checkout information', async () => {
-    await checkout.completeStepOne(user);
+      await expect(page).toHaveURL(/checkout-step-one/);
+    });
 
-    await expect(page).toHaveURL(/checkout-step-two/);
-  });
+    await test.step('Fill checkout information', async () => {
+      await checkoutPage.completeStepOne(user);
 
-  await test.step('Finish order successfully', async () => {
-    await checkout.finishOrder();
+      await expect(page).toHaveURL(/checkout-step-two/);
+    });
 
-    await expect(checkout.successMessage).toHaveText(
-      'Thank you for your order!'
-    );
+    await test.step('Finish order successfully', async () => {
+      await checkoutPage.finishOrder();
+
+      await expect(checkoutPage.successMessage).toHaveText(
+        'Thank you for your order!'
+      );
+
+      await expect(page).toHaveURL(/checkout-complete/);
+    });
   });
 });
