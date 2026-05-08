@@ -57,4 +57,10 @@ export class InventoryPage {
   sortBy(sort) {
     return this.page.locator(this.productSortSelect).selectOption(sort);
   }
+
+  async addProducts(products) {
+    for (const product of products) {
+      await this.addProduct(product);
+    }
+  }
 }

@@ -29,9 +29,7 @@ test.describe('Shopping Cart', () => {
 
   test('the quantity of products on the list should match the cart badge', async () => {
     await test.step('Add products to cart', async () => {
-      for (const product of PRODUCTS) {
-        await inventoryPage.addProduct(product);
-      }
+      await inventoryPage.addProducts(PRODUCTS);
     });
 
     await test.step('Open cart page', async () => {
@@ -59,9 +57,7 @@ test.describe('Shopping Cart', () => {
     const expectedCount = PRODUCTS.length - 1;
 
     await test.step('Add products to cart', async () => {
-      for (const product of PRODUCTS) {
-        await inventoryPage.addProduct(product);
-      }
+      await inventoryPage.addProducts(PRODUCTS);
     });
 
     await test.step('Open cart page', async () => {
@@ -112,9 +108,7 @@ test.describe('Shopping Cart', () => {
     const checkoutPage = new CheckoutPage(page);
 
     await test.step('Add products to cart', async () => {
-      for (const product of PRODUCTS) {
-        await inventoryPage.addProduct(product);
-      }
+      await inventoryPage.addProducts(PRODUCTS);
     });
 
     await test.step('Open cart page', async () => {
