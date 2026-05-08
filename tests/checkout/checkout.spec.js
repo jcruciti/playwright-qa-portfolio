@@ -31,9 +31,7 @@ test.describe('Checkout Flow', () => {
     await loginPage.open();
     await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 
-    for (const product of PRODUCTS) {
-      await inventoryPage.addProduct(product);
-    }
+    await inventoryPage.addProducts(PRODUCTS);
 
     await inventoryPage.openCart();
     await cartPage.proceedToCheckout();
@@ -89,7 +87,6 @@ test.describe('Checkout Flow', () => {
 
         await checkoutPage.fillInformation(invalidUser);
 
-        // 🔥 FIX: ensure proper submit flow
         await checkoutPage.continueToStepTwo();
 
         await expect(checkoutPage.errorMessage).toBeVisible();
