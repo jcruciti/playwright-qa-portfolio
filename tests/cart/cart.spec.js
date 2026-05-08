@@ -1,14 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 
 test.describe('Shopping Cart', () => {
   let inventoryPage;
   let cartPage;
-
-  const USER = process.env.SAUCE_USER;
-  const PASSWORD = process.env.SAUCE_PASSWORD;
 
   const PRODUCTS = [
     'sauce-labs-backpack',
@@ -18,14 +14,10 @@ test.describe('Shopping Cart', () => {
   ];
 
   test.beforeEach(async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
     inventoryPage = new InventoryPage(page);
     cartPage = new CartPage(page);
 
-    await loginPage.open();
-
-    await loginPage.login(USER, PASSWORD);
+    await page.goto('/inventory.html');
   });
 
   test('should display the correct cart badge quantity', async () => {
