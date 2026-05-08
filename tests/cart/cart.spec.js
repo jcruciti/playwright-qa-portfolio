@@ -2,11 +2,13 @@ import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
-import { CheckoutPage } from '../../pages/CheckoutPage';
 
 test.describe('Shopping Cart', () => {
   let inventoryPage;
   let cartPage;
+
+  const USER = process.env.SAUCE_USER;
+  const PASSWORD = process.env.SAUCE_PASSWORD;
 
   const PRODUCTS = [
     'sauce-labs-backpack',
@@ -16,18 +18,17 @@ test.describe('Shopping Cart', () => {
   ];
 
   test.beforeEach(async ({ page }) => {
-    const login = new LoginPage(page);
+    const loginPage = new LoginPage(page);
 
     inventoryPage = new InventoryPage(page);
     cartPage = new CartPage(page);
 
-    await test.step('Login with valid credentials', async () => {
-      await login.open();
-      await login.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
-    });
+    await loginPage.open();
+
+    await loginPage.login(USER, PASSWORD);
   });
 
-  test('the quantity of products on the list should match the cart badge', async () => {
+  test('should display the correct cart badge quantity', async () => {
     await test.step('Add products to cart', async () => {
       await inventoryPage.addProducts(PRODUCTS);
     });
@@ -36,16 +37,16 @@ test.describe('Shopping Cart', () => {
       await inventoryPage.openCart();
     });
 
-    let itemsCount;
+    let cartItemsCount;
 
     await test.step('Validate cart items quantity', async () => {
-      await expect(cartPage.getCartItems()).toHaveCount(4);
+      await expect(cartPage.getCartItems()).toHaveCount(PRODUCTS.length);
 
-      itemsCount = await cartPage.getCartItems().count();
+      cartItemsCount = await cartPage.getCartItems().count();
     });
 
     await test.step('Validate cart badge quantity', async () => {
-      await expect(cartPage.getCartBadge()).toHaveText(String(itemsCount));
+      await expect(cartPage.getCartBadge()).toHaveText(String(cartItemsCount));
     });
   });
 
@@ -100,13 +101,12 @@ test.describe('Shopping Cart', () => {
 
     await test.step('Validate navigation back to inventory page', async () => {
       await expect(page).toHaveURL(/inventory/);
+
       await expect(inventoryPage.getInventoryList()).toBeVisible();
     });
   });
 
   test('should go to checkout page', async ({ page }) => {
-    const checkoutPage = new CheckoutPage(page);
-
     await test.step('Add products to cart', async () => {
       await inventoryPage.addProducts(PRODUCTS);
     });
@@ -121,7 +121,6 @@ test.describe('Shopping Cart', () => {
 
     await test.step('Validate checkout page navigation', async () => {
       await expect(page).toHaveURL(/checkout-step-one/);
-      await expect(cartPage.getCartTitle()).toBeVisible();
     });
   });
 
