@@ -28,55 +28,93 @@ test.describe('Checkout Flow', () => {
 
     user = buildUser();
 
-    await loginPage.open();
-    await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+    await test.step('Login with valid credentials', async () => {
+      await loginPage.open();
 
-    await inventoryPage.addProducts(PRODUCTS);
+      await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+    });
 
-    await inventoryPage.openCart();
-    await cartPage.proceedToCheckout();
+    await test.step('Add products to cart', async () => {
+      await inventoryPage.addProducts(PRODUCTS);
+    });
+
+    await test.step('Navigate to checkout step one', async () => {
+      await inventoryPage.openCart();
+
+      await cartPage.proceedToCheckout();
+    });
   });
 
   test('should verify calculated sum matches UI total', async () => {
-    await checkoutPage.completeStepOne(user);
+    await test.step('Fill checkout information', async () => {
+      await checkoutPage.completeStepOne(user);
+    });
 
-    await checkoutPage.summaryContainer.waitFor({ state: 'visible' });
+    await test.step('Wait for checkout summary page', async () => {
+      await checkoutPage.summaryContainer.waitFor({
+        state: 'visible',
+      });
+    });
 
-    const { calculated, uiTotal } =
-      await checkoutPage.assertSubtotalMatchesItems();
+    await test.step('Validate subtotal matches item prices', async () => {
+      const { calculated, uiTotal } =
+        await checkoutPage.assertSubtotalMatchesItems();
 
-    expect(calculated).toBeCloseTo(uiTotal, 2);
+      expect(calculated).toBeCloseTo(uiTotal, 2);
+    });
   });
 
   test('should navigate back to cart page from checkout', async ({ page }) => {
-    await checkoutPage.cancelOrder();
+    await test.step('Cancel checkout process', async () => {
+      await checkoutPage.cancelOrder();
+    });
 
-    await expect(page).toHaveURL(/cart/);
-    await expect(cartPage.getCartTitle()).toBeVisible();
+    await test.step('Validate navigation back to cart page', async () => {
+      await expect(page).toHaveURL(/cart/);
+
+      await expect(cartPage.getCartTitle()).toBeVisible();
+    });
   });
 
   test('should navigate to checkout step two', async ({ page }) => {
-    await checkoutPage.completeStepOne(user);
+    await test.step('Complete checkout step one', async () => {
+      await checkoutPage.completeStepOne(user);
+    });
 
-    await expect(page).toHaveURL(/checkout-step-two/);
-    await expect(checkoutPage.summaryContainer).toBeVisible();
+    await test.step('Validate navigation to checkout step two', async () => {
+      await expect(page).toHaveURL(/checkout-step-two/);
+
+      await expect(checkoutPage.summaryContainer).toBeVisible();
+    });
   });
 
   test.describe('Checkout required fields validation', () => {
     const cases = [
       {
         field: 'First Name',
-        data: { firstName: '', lastName: 'Cruciti', postalCode: '06120-080' },
+        data: {
+          firstName: '',
+          lastName: 'Cruciti',
+          postalCode: '06120-080',
+        },
         message: 'Error: First Name is required',
       },
       {
         field: 'Last Name',
-        data: { firstName: 'John', lastName: '', postalCode: '06120-080' },
+        data: {
+          firstName: 'John',
+          lastName: '',
+          postalCode: '06120-080',
+        },
         message: 'Error: Last Name is required',
       },
       {
         field: 'Postal Code',
-        data: { firstName: 'John', lastName: 'Cruciti', postalCode: '' },
+        data: {
+          firstName: 'John',
+          lastName: 'Cruciti',
+          postalCode: '',
+        },
         message: 'Error: Postal Code is required',
       },
     ];
@@ -85,32 +123,50 @@ test.describe('Checkout Flow', () => {
       test(`should validate ${field} is required`, async () => {
         const invalidUser = buildUser(data);
 
-        await checkoutPage.fillInformation(invalidUser);
+        await test.step(`Fill checkout form without ${field}`, async () => {
+          await checkoutPage.fillInformation(invalidUser);
+        });
 
-        await checkoutPage.continueToStepTwo();
+        await test.step('Try to continue to checkout step two', async () => {
+          await checkoutPage.continueToStepTwo();
+        });
 
-        await expect(checkoutPage.errorMessage).toBeVisible();
-        await expect(checkoutPage.errorMessage).toHaveText(message);
+        await test.step(`Validate ${field} validation message`, async () => {
+          await expect(checkoutPage.errorMessage).toBeVisible();
+
+          await expect(checkoutPage.errorMessage).toHaveText(message);
+        });
       });
     }
   });
 
   test('should redirect to shopping cart', async ({ page }) => {
-    await inventoryPage.openCart();
+    await test.step('Open shopping cart page', async () => {
+      await inventoryPage.openCart();
+    });
 
-    await expect(page).toHaveURL(/cart/);
-    await expect(cartPage.getCartTitle()).toBeVisible();
+    await test.step('Validate cart page is displayed', async () => {
+      await expect(page).toHaveURL(/cart/);
+
+      await expect(cartPage.getCartTitle()).toBeVisible();
+    });
   });
 
   test('should finish the order', async ({ page }) => {
-    await checkoutPage.completeStepOne(user);
+    await test.step('Complete checkout step one', async () => {
+      await checkoutPage.completeStepOne(user);
+    });
 
-    await checkoutPage.finishOrder();
+    await test.step('Finish the order', async () => {
+      await checkoutPage.finishOrder();
+    });
 
-    await expect(checkoutPage.successMessage).toHaveText(
-      'Thank you for your order!'
-    );
+    await test.step('Validate successful order completion', async () => {
+      await expect(checkoutPage.successMessage).toHaveText(
+        'Thank you for your order!'
+      );
 
-    await expect(page).toHaveURL(/checkout-complete/);
+      await expect(page).toHaveURL(/checkout-complete/);
+    });
   });
 });
