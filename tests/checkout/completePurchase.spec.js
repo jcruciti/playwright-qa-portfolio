@@ -3,9 +3,10 @@ import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
+
 const { buildUser } = require('../../utils/userFactory');
 
-test('complete purchase flow', async ({ page }) => {
+test('should complete purchase flow successfully', async ({ page }) => {
   const login = new LoginPage(page);
   const inventory = new InventoryPage(page);
   const cart = new CartPage(page);
@@ -13,23 +14,37 @@ test('complete purchase flow', async ({ page }) => {
 
   const user = buildUser();
 
-  // Login
-  await login.open();
-  await login.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+  await test.step('Login with valid credentials', async () => {
+    await login.open();
+    await login.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 
-  // Add product
-  await inventory.addProduct('sauce-labs-backpack');
-  await inventory.openCart();
+    await expect(page).toHaveURL(/inventory/);
+  });
 
-  // Cart
-  await cart.proceedToCheckout();
+  await test.step('Add products to cart', async () => {
+    await inventory.addProduct('sauce-labs-backpack');
 
-  // Checkout step 1
-  await checkout.completeStepOne(user);
+    await expect(inventory.getCartBadge()).toHaveText('1');
+  });
 
-  await checkout.finishOrder();
+  await test.step('Proceed to checkout', async () => {
+    await inventory.openCart();
+    await cart.proceedToCheckout();
 
-  await expect(checkout.successMessage).toHaveText('Thank you for your order!');
+    await expect(page).toHaveURL(/checkout-step-one/);
+  });
 
-  await expect(page).toHaveURL(/checkout-complete/);
+  await test.step('Fill checkout information', async () => {
+    await checkout.completeStepOne(user);
+
+    await expect(page).toHaveURL(/checkout-step-two/);
+  });
+
+  await test.step('Finish order successfully', async () => {
+    await checkout.finishOrder();
+
+    await expect(checkout.successMessage).toHaveText(
+      'Thank you for your order!'
+    );
+  });
 });
