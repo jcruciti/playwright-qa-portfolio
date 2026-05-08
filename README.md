@@ -8,16 +8,19 @@ End-to-end test automation project built with **Playwright** using the **Page Ob
 
 # 📌 Project Overview
 
-This project was created to demonstrate practical QA Automation skills including:
+This project demonstrates real-world QA Automation skills focused on scalable and maintainable test architecture.
 
-- End-to-end testing
-- Functional UI validation
-- Scalable automation architecture
-- Page Object Model implementation
-- Dynamic test data generation
-- Maintainable test design
-- Session and state validation
-- Continuous Integration readiness
+Key capabilities demonstrated:
+
+- End-to-end UI testing
+- Functional and regression testing
+- Page Object Model (POM) architecture
+- Test data generation with Faker
+- State/session validation
+- Sorting and business logic validation
+- Checkout calculation verification
+- Cross-page navigation flows
+- CI/CD-ready structure
 
 ---
 
@@ -25,45 +28,61 @@ This project was created to demonstrate practical QA Automation skills including
 
 ## 🔐 Authentication
 
-- Successful login validation
+- Valid login authentication
 - Invalid login validation
-- Error message validation
+- Error message handling
 
 ## 🛍️ Inventory
 
-- Product list validation
-- Add product to cart
-- Remove product from cart
-- Cart persistence after reload
-- Cart persistence after logout/login
+- Product listing validation
+- Add/remove products from cart
+- Cart persistence (reload & session)
 - Product sorting validation:
   - A → Z
   - Z → A
-  - Low → High price
-  - High → Low price
+  - Price Low → High
+  - Price High → Low
 
 ## 🛒 Cart
 
-- Cart badge validation
+- Cart badge synchronization
 - Item quantity validation
-- Product removal validation
+- Product removal behavior
 - Empty cart validation
-- Navigation between pages
+- Navigation between cart and inventory
 
 ## 💳 Checkout
 
-- Checkout flow validation
-- Required fields validation
-- Price subtotal validation
-- Navigation between checkout steps
+- Complete checkout workflow
+- Required field validation
+- Checkout step navigation
+- Subtotal calculation validation
 - Order completion validation
-- Success message validation
+- Success confirmation message
 
 ## 🔄 End-to-End Flow
 
-Complete purchase flow:
+Full purchase journey:
 
-Login → Add product → Cart → Checkout → Order confirmation
+Login → Add products → Cart → Checkout → Order completion
+
+---
+
+# 📄 Test Case Documentation
+
+All test cases are documented in:
+
+```txt
+docs/test-cases/
+```
+
+Each test case includes:
+- Objective
+- Preconditions
+- Steps
+- Expected results
+- Priority
+- Traceability to automation tests
 
 ---
 
@@ -72,7 +91,7 @@ Login → Add product → Cart → Checkout → Order confirmation
 ```bash
 PLAYWRIGHT-QA-PORTFOLIO
 │
-├── pages/
+├── pages/                     # Page Object Model (POM)
 │   ├── CartPage.js
 │   ├── CheckoutPage.js
 │   ├── InventoryPage.js
@@ -80,37 +99,26 @@ PLAYWRIGHT-QA-PORTFOLIO
 │
 ├── tests/
 │   ├── auth/
-│   │   └── login.spec.js
-│   │
 │   ├── cart/
-│   │   └── cart.spec.js
-│   │
 │   ├── checkout/
-│   │   ├── checkout.spec.js
-│   │   └── completePurchase.spec.js
-│   │
-│   ├── inventory.spec.js
-│   └── example.spec.js
+│   └── inventory.spec.js
 │
 ├── utils/
 │   ├── assertSorted.js
-│   ├── basicTest.js
-│   └── userFactory.js
+│   ├── userFactory.js
+│
+├── docs/
+│   └── test-cases/
 │
 ├── playwright-report/
 ├── test-results/
 │
 ├── .env
-├── .eslintignore
-├── .eslintrc.cjs
-├── .gitignore
-├── .prettierrc
-│
-├── package.json
-├── package-lock.json
 ├── playwright.config.js
+├── package.json
 └── README.md
 ```
+
 ---
 
 # ⚙️ Setup & Installation
@@ -121,7 +129,7 @@ Clone the repository:
 git clone https://github.com/jcruciti/playwright-qa-portfolio.git
 ```
 
-Access the project folder:
+Access project:
 
 ```bash
 cd playwright-qa-portfolio
@@ -139,7 +147,7 @@ Install Playwright browsers:
 npx playwright install
 ```
 
-Create a `.env` file in the root directory:
+Create `.env` file:
 
 ```env
 SAUCE_USER=standard_user
@@ -168,45 +176,45 @@ Run UI mode:
 npx playwright test --ui
 ```
 
-Run a specific test file:
+Run specific file:
 
 ```bash
-npx playwright test tests/checkout/checkout.spec.js
+npx playwright test tests/checkout
 ```
 
 ---
 
-# 📊 Test Reports
+# 📊 Reports
 
-Generate and open the Playwright HTML report:
+Generate HTML report:
 
 ```bash
 npx playwright show-report
 ```
 
-Reports are automatically generated in:
+Reports are stored in:
 
-```bash
+```txt
 playwright-report/
 ```
 
 ---
 
-# 🏗️ Design Patterns & Best Practices
+# 🏗️ Architecture & Design Patterns
 
 ## ✅ Page Object Model (POM)
 
-The framework uses the Page Object Model pattern to improve:
+This project follows the Page Object Model pattern to ensure:
 
-- Scalability
+- Reusability
 - Maintainability
-- Readability
-- Code reuse
+- Separation of concerns
+- Scalability
 
 Each page contains:
 - Locators
-- Page actions
-- Reusable methods
+- UI actions
+- Business interactions
 
 Example:
 
@@ -220,9 +228,9 @@ async login(username, password) {
 
 ---
 
-# 🎲 Dynamic Test Data
+# 🎲 Test Data Strategy
 
-Dynamic test users are generated using Faker.js:
+Dynamic test data is generated using Faker.js:
 
 ```js
 const defaultUser = {
@@ -232,43 +240,58 @@ const defaultUser = {
 };
 ```
 
-This helps avoid hardcoded test data and improves test reliability.
+Benefits:
+- Eliminates hardcoded data
+- Improves test reliability
+- Enables data-driven testing
 
 ---
 
 # 🔧 Best Practices Applied
 
 - Page Object Model (POM)
-- Test isolation using `beforeEach`
-- Reusable page components
-- Clear assertions and validations
-- Organized test structure
-- Dynamic test data generation
-- Environment variable management
-- Readable and maintainable code
+- Test isolation with `beforeEach`
+- Reusable components
+- Clean assertions
+- Environment variable usage
+- Modular test design
+- Stable selectors strategy
+- Maintainable folder structure
 
 ---
 
 # 💡 Technical Highlights
 
-- Dynamic selectors for product interactions
-- Cart badge vs item quantity validation
+- Dynamic product selectors
+- Cart vs UI synchronization validation
 - Session persistence testing
 - Sorting validation utilities
-- UI subtotal calculation validation
-- Complete E2E purchase flow simulation
+- Checkout subtotal calculation verification
+- End-to-end purchase flow automation
+- Data-driven validation scenarios
 
 ---
 
-# 🚧 Future Improvements
+# 🚀 CI/CD Ready
 
-- GitHub Actions CI pipeline
+Project structure supports integration with:
+
+- GitHub Actions
+- Jenkins pipelines
+- Docker execution (future-ready)
+
+---
+
+# 📈 Future Improvements
+
+- CI pipeline with GitHub Actions
 - Allure reporting integration
-- Cross-browser execution strategy
-- API testing integration
-- Docker support
+- Cross-browser testing expansion
+- API testing layer integration
 - Visual regression testing
-- Retry and flaky test handling
+- Docker support
+- Flaky test retry strategy
+- Test tagging (smoke / regression)
 
 ---
 
@@ -276,8 +299,8 @@ This helps avoid hardcoded test data and improves test reliability.
 
 **Joe Cruciti**
 
-QA Automation Portfolio Project
+QA Automation Engineer | Portfolio Project
 
 ---
 
-📌 This project is part of my QA Automation portfolio and is continuously evolving.
+📌 This project is continuously evolving to reflect real-world QA engineering practices and scalable automation architecture.
