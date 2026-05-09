@@ -13,12 +13,10 @@ test.describe('Inventory', () => {
 
   test.beforeEach(async ({ page }) => {
     login = new LoginPage(page);
+
     inventory = new InventoryPage(page);
 
-    await test.step('Login with valid credentials', async () => {
-      await login.open();
-      await login.login(user, pass);
-    });
+    await page.goto('/inventory.html');
   });
 
   test('should display list of available products', async () => {
