@@ -69,7 +69,7 @@ Login (via `storageState`) → Add products → Cart → Checkout → Order comp
 
 # 🏗️ Project Structure
 
-```bash
+````bash
 PLAYWRIGHT-QA-PORTFOLIO
 │
 ├── pages/
@@ -105,16 +105,19 @@ PLAYWRIGHT-QA-PORTFOLIO
 
 ⚙️ Setup & Installation
 
+```bash
 git clone https://github.com/jcruciti/playwright-qa-portfolio.git
 cd playwright-qa-portfolio
 npm install
 npx playwright install
+````
 
 Create .env:
 
+```bash
 SAUCE_USER=standard_user
 SAUCE_PASSWORD=secret_sauce
-
+```
 
 ▶️ Running Tests
 
@@ -122,7 +125,6 @@ npx playwright test
 npx playwright test --headed
 npx playwright test --ui
 npx playwright test tests/checkout
-
 
 📊 Reports
 
@@ -132,23 +134,23 @@ Reports:
 
 playwright-report/
 
-
 🏗️ Architecture & Design Patterns
 Page Object Model (POM)
-* Reusability
-* Maintainability
-* Separation of concerns
-* Scalability
+
+- Reusability
+- Maintainability
+- Separation of concerns
+- Scalability
 
 🔐 Authentication Strategy (Modern Approach)
 This project evolved from UI-based login in beforeEach to a persistent authentication strategy using Playwright storageState.
 ❌ Legacy Approach
 
 test.beforeEach(async ({ page }) => {
-  const loginPage = new LoginPage(page);
+const loginPage = new LoginPage(page);
 
-  await loginPage.open();
-  await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+await loginPage.open();
+await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
 });
 
 ✅ Current Approach
@@ -158,49 +160,57 @@ Session persisted via:
 storageState: 'playwright/.auth/user.json'
 
 Benefits:
-* Faster execution
-* More stable tests
-* Less UI dependency
-* Better CI performance
+
+- Faster execution
+- More stable tests
+- Less UI dependency
+- Better CI performance
 
 🎲 Test Data Strategy
 
 const defaultUser = {
-  firstName: faker.person.firstName(),
-  lastName: faker.person.lastName(),
-  postalCode: faker.location.zipCode(),
+firstName: faker.person.firstName(),
+lastName: faker.person.lastName(),
+postalCode: faker.location.zipCode(),
 };
 
 🔧 Best Practices
-* POM architecture
-* Centralized authentication via storageState
-* Test isolation
-* Clean assertions
-* Environment variables
-* Stable selectors
-* Modular structure
+
+- POM architecture
+- Centralized authentication via storageState
+- Test isolation
+- Clean assertions
+- Environment variables
+- Stable selectors
+- Modular structure
 
 💡 Highlights
-* Cart persistence validation
-* Session handling via storageState
-* Checkout flow validation
-* Subtotal calculation verification
-* Cross-browser execution
-* End-to-end automation
+
+- Cart persistence validation
+- Session handling via storageState
+- Checkout flow validation
+- Subtotal calculation verification
+- Cross-browser execution
+- End-to-end automation
 
 🚀 CI/CD Ready
-* GitHub Actions compatible
-* Jenkins ready
-* Docker-ready structure
+
+- GitHub Actions compatible
+- Jenkins ready
+- Docker-ready structure
 
 📈 Future Improvements
-* GitHub Actions pipeline
-* Allure reporting
-* API testing layer with Playwright API
-* Visual regression testing
-* Retry strategy for flaky tests
-* Test tagging (smoke/regression)
+
+- GitHub Actions pipeline
+- Allure reporting
+- API testing layer with Playwright API
+- Visual regression testing
+- Retry strategy for flaky tests
+- Test tagging (smoke/regression)
 
 👨‍💻 Author
 Joe Cruciti QA Automation Engineer | Portfolio Project
+
+```
+
 ```
