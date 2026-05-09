@@ -69,7 +69,7 @@ Login (via `storageState`) → Add products → Cart → Checkout → Order comp
 
 # 🏗️ Project Structure
 
-````bash
+```bash
 PLAYWRIGHT-QA-PORTFOLIO
 │
 ├── pages/
@@ -214,4 +214,7 @@ postalCode: faker.location.zipCode(),
 
 👨‍💻 Author
 Joe Cruciti | QA Automation Engineer | Portfolio Project
-````
+
+```
+
+```
