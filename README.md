@@ -14,12 +14,13 @@ Key capabilities demonstrated:
 
 - End-to-end UI testing
 - Functional and regression testing
-- Page Object Model (POM) architecture
+- Page Object Model (POM)
 - Test data generation with Faker
-- State/session validation
-- Sorting and business logic validation
-- Checkout calculation verification
-- Cross-page navigation flows
+- 🔐 Session management using Playwright `storageState`
+- Cart persistence validation
+- Checkout flow validation
+- Business logic validation (pricing, totals)
+- Cross-browser testing (Chromium, Firefox, WebKit)
 - CI/CD-ready structure
 
 ---
@@ -31,17 +32,15 @@ Key capabilities demonstrated:
 - Valid login authentication
 - Invalid login validation
 - Error message handling
+- Session management via `storageState` (persistent authenticated context)
 
 ## 🛍️ Inventory
 
 - Product listing validation
 - Add/remove products from cart
-- Cart persistence (reload & session)
-- Product sorting validation:
-  - A → Z
-  - Z → A
-  - Price Low → High
-  - Price High → Low
+- Cart badge validation
+- Cart persistence across sessions
+- Sorting validation (A → Z, Z → A, Price Low → High, Price High → Low)
 
 ## 🛒 Cart
 
@@ -54,35 +53,17 @@ Key capabilities demonstrated:
 ## 💳 Checkout
 
 - Complete checkout workflow
-- Required field validation
-- Checkout step navigation
+- Required field validations (First Name, Last Name, Postal Code)
+- Checkout step navigation (Step One → Step Two → Complete)
 - Subtotal calculation validation
 - Order completion validation
 - Success confirmation message
 
-## 🔄 End-to-End Flow
-
-Full purchase journey:
-
-Login → Add products → Cart → Checkout → Order completion
-
 ---
 
-# 📄 Test Case Documentation
+## 🔄 End-to-End Flow
 
-All test cases are documented in:
-
-```txt
-docs/test-cases/
-```
-
-Each test case includes:
-- Objective
-- Preconditions
-- Steps
-- Expected results
-- Priority
-- Traceability to automation tests
+Login (via `storageState`) → Add products → Cart → Checkout → Order completion
 
 ---
 
@@ -91,7 +72,7 @@ Each test case includes:
 ```bash
 PLAYWRIGHT-QA-PORTFOLIO
 │
-├── pages/                     # Page Object Model (POM)
+├── pages/
 │   ├── CartPage.js
 │   ├── CheckoutPage.js
 │   ├── InventoryPage.js
@@ -113,194 +94,113 @@ PLAYWRIGHT-QA-PORTFOLIO
 ├── playwright-report/
 ├── test-results/
 │
+├── playwright/.auth/
+│   └── user.json
+│
 ├── .env
 ├── playwright.config.js
 ├── package.json
 └── README.md
-```
 
----
 
-# ⚙️ Setup & Installation
+⚙️ Setup & Installation
 
-Clone the repository:
-
-```bash
 git clone https://github.com/jcruciti/playwright-qa-portfolio.git
-```
-
-Access project:
-
-```bash
 cd playwright-qa-portfolio
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Install Playwright browsers:
-
-```bash
 npx playwright install
-```
 
-Create `.env` file:
+Create .env:
 
-```env
 SAUCE_USER=standard_user
 SAUCE_PASSWORD=secret_sauce
-```
 
----
 
-# ▶️ Running Tests
+▶️ Running Tests
 
-Run all tests:
-
-```bash
 npx playwright test
-```
-
-Run in headed mode:
-
-```bash
 npx playwright test --headed
-```
-
-Run UI mode:
-
-```bash
 npx playwright test --ui
-```
-
-Run specific file:
-
-```bash
 npx playwright test tests/checkout
-```
 
----
 
-# 📊 Reports
+📊 Reports
 
-Generate HTML report:
-
-```bash
 npx playwright show-report
-```
 
-Reports are stored in:
+Reports:
 
-```txt
 playwright-report/
-```
 
----
 
-# 🏗️ Architecture & Design Patterns
+🏗️ Architecture & Design Patterns
+Page Object Model (POM)
+* Reusability
+* Maintainability
+* Separation of concerns
+* Scalability
 
-## ✅ Page Object Model (POM)
+🔐 Authentication Strategy (Modern Approach)
+This project evolved from UI-based login in beforeEach to a persistent authentication strategy using Playwright storageState.
+❌ Legacy Approach
 
-This project follows the Page Object Model pattern to ensure:
+test.beforeEach(async ({ page }) => {
+  const loginPage = new LoginPage(page);
 
-- Reusability
-- Maintainability
-- Separation of concerns
-- Scalability
+  await loginPage.open();
+  await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+});
 
-Each page contains:
-- Locators
-- UI actions
-- Business interactions
+✅ Current Approach
+Authentication executed once in setup project.
+Session persisted via:
 
-Example:
+storageState: 'playwright/.auth/user.json'
 
-```js
-async login(username, password) {
-  await this.page.fill(this.usernameInput, username);
-  await this.page.fill(this.passwordInput, password);
-  await this.page.click(this.loginButton);
-}
-```
+Benefits:
+* Faster execution
+* More stable tests
+* Less UI dependency
+* Better CI performance
 
----
+🎲 Test Data Strategy
 
-# 🎲 Test Data Strategy
-
-Dynamic test data is generated using Faker.js:
-
-```js
 const defaultUser = {
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   postalCode: faker.location.zipCode(),
 };
+
+🔧 Best Practices
+* POM architecture
+* Centralized authentication via storageState
+* Test isolation
+* Clean assertions
+* Environment variables
+* Stable selectors
+* Modular structure
+
+💡 Highlights
+* Cart persistence validation
+* Session handling via storageState
+* Checkout flow validation
+* Subtotal calculation verification
+* Cross-browser execution
+* End-to-end automation
+
+🚀 CI/CD Ready
+* GitHub Actions compatible
+* Jenkins ready
+* Docker-ready structure
+
+📈 Future Improvements
+* GitHub Actions pipeline
+* Allure reporting
+* API testing layer with Playwright API
+* Visual regression testing
+* Retry strategy for flaky tests
+* Test tagging (smoke/regression)
+
+👨‍💻 Author
+Joe Cruciti QA Automation Engineer | Portfolio Project
 ```
-
-Benefits:
-- Eliminates hardcoded data
-- Improves test reliability
-- Enables data-driven testing
-
----
-
-# 🔧 Best Practices Applied
-
-- Page Object Model (POM)
-- Test isolation with `beforeEach`
-- Reusable components
-- Clean assertions
-- Environment variable usage
-- Modular test design
-- Stable selectors strategy
-- Maintainable folder structure
-
----
-
-# 💡 Technical Highlights
-
-- Dynamic product selectors
-- Cart vs UI synchronization validation
-- Session persistence testing
-- Sorting validation utilities
-- Checkout subtotal calculation verification
-- End-to-end purchase flow automation
-- Data-driven validation scenarios
-
----
-
-# 🚀 CI/CD Ready
-
-Project structure supports integration with:
-
-- GitHub Actions
-- Jenkins pipelines
-- Docker execution (future-ready)
-
----
-
-# 📈 Future Improvements
-
-- CI pipeline with GitHub Actions
-- Allure reporting integration
-- Cross-browser testing expansion
-- API testing layer integration
-- Visual regression testing
-- Docker support
-- Flaky test retry strategy
-- Test tagging (smoke / regression)
-
----
-
-# 👨‍💻 Author
-
-**Joe Cruciti**
-
-QA Automation Engineer | Portfolio Project
-
----
-
-📌 This project is continuously evolving to reflect real-world QA engineering practices and scalable automation architecture.
