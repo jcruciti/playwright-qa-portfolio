@@ -101,16 +101,16 @@ PLAYWRIGHT-QA-PORTFOLIO
 ├── playwright.config.js
 ├── package.json
 └── README.md
+```
 
-
-⚙️ Setup & Installation
+# ⚙️ Setup & Installation
 
 ```bash
 git clone https://github.com/jcruciti/playwright-qa-portfolio.git
 cd playwright-qa-portfolio
 npm install
 npx playwright install
-````
+```
 
 Create .env:
 
@@ -121,14 +121,18 @@ SAUCE_PASSWORD=secret_sauce
 
 ▶️ Running Tests
 
+```bash
 npx playwright test
 npx playwright test --headed
 npx playwright test --ui
 npx playwright test tests/checkout
+```
 
 📊 Reports
 
+```bash
 npx playwright show-report
+```
 
 Reports:
 
@@ -209,8 +213,5 @@ postalCode: faker.location.zipCode(),
 - Test tagging (smoke/regression)
 
 👨‍💻 Author
-Joe Cruciti QA Automation Engineer | Portfolio Project
-
-```
-
-```
+Joe Cruciti | QA Automation Engineer | Portfolio Project
+````
