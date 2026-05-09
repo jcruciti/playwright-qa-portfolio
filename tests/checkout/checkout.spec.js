@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/LoginPage';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 import { CheckoutPage } from '../../pages/CheckoutPage';
@@ -20,43 +19,51 @@ test.describe('Checkout Flow', () => {
   ];
 
   test.beforeEach(async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
     inventoryPage = new InventoryPage(page);
     cartPage = new CartPage(page);
     checkoutPage = new CheckoutPage(page);
 
     user = buildUser();
 
-    await test.step('Login with valid credentials', async () => {
-      await loginPage.open();
+    await test.step('Open inventory page', async () => {
+      await page.goto('/inventory.html');
 
-      await loginPage.login(process.env.SAUCE_USER, process.env.SAUCE_PASSWORD);
+      await expect(page).toHaveURL(/inventory/);
     });
 
     await test.step('Add products to cart', async () => {
       await inventoryPage.addProducts(PRODUCTS);
+
+      await expect(inventoryPage.getCartBadge()).toHaveText(
+        String(PRODUCTS.length)
+      );
     });
 
-    await test.step('Navigate to checkout step one', async () => {
+    await test.step('Open cart page', async () => {
       await inventoryPage.openCart();
 
+      await expect(page).toHaveURL(/cart/);
+    });
+
+    await test.step('Proceed to checkout step one', async () => {
       await cartPage.proceedToCheckout();
+
+      await expect(page).toHaveURL(/checkout-step-one/);
     });
   });
 
-  test('should verify calculated sum matches UI total', async () => {
+  test('should verify calculated sum matches UI total', async ({ page }) => {
     await test.step('Fill checkout information', async () => {
       await checkoutPage.completeStepOne(user);
     });
 
-    await test.step('Wait for checkout summary page', async () => {
-      await checkoutPage.summaryContainer.waitFor({
-        state: 'visible',
-      });
+    await test.step('Validate navigation to checkout step two', async () => {
+      await expect(page).toHaveURL(/checkout-step-two/);
+
+      await expect(checkoutPage.summaryContainer).toBeVisible();
     });
 
-    await test.step('Validate subtotal matches item prices', async () => {
+    await test.step('Validate subtotal calculation', async () => {
       const { calculated, uiTotal } =
         await checkoutPage.assertSubtotalMatchesItems();
 
@@ -77,7 +84,7 @@ test.describe('Checkout Flow', () => {
   });
 
   test('should navigate to checkout step two', async ({ page }) => {
-    await test.step('Complete checkout step one', async () => {
+    await test.step('Fill checkout information', async () => {
       await checkoutPage.completeStepOne(user);
     });
 
@@ -127,11 +134,11 @@ test.describe('Checkout Flow', () => {
           await checkoutPage.fillInformation(invalidUser);
         });
 
-        await test.step('Try to continue to checkout step two', async () => {
+        await test.step('Try to continue checkout', async () => {
           await checkoutPage.continueToStepTwo();
         });
 
-        await test.step(`Validate ${field} validation message`, async () => {
+        await test.step(`Validate ${field} error message`, async () => {
           await expect(checkoutPage.errorMessage).toBeVisible();
 
           await expect(checkoutPage.errorMessage).toHaveText(message);
@@ -141,11 +148,11 @@ test.describe('Checkout Flow', () => {
   });
 
   test('should redirect to shopping cart', async ({ page }) => {
-    await test.step('Open shopping cart page', async () => {
-      await inventoryPage.openCart();
+    await test.step('Cancel checkout and return to cart', async () => {
+      await checkoutPage.cancelOrder();
     });
 
-    await test.step('Validate cart page is displayed', async () => {
+    await test.step('Validate shopping cart page', async () => {
       await expect(page).toHaveURL(/cart/);
 
       await expect(cartPage.getCartTitle()).toBeVisible();
@@ -153,8 +160,14 @@ test.describe('Checkout Flow', () => {
   });
 
   test('should finish the order', async ({ page }) => {
-    await test.step('Complete checkout step one', async () => {
+    await test.step('Fill checkout information', async () => {
       await checkoutPage.completeStepOne(user);
+    });
+
+    await test.step('Validate checkout overview page', async () => {
+      await expect(page).toHaveURL(/checkout-step-two/);
+
+      await expect(checkoutPage.summaryContainer).toBeVisible();
     });
 
     await test.step('Finish the order', async () => {
@@ -162,11 +175,11 @@ test.describe('Checkout Flow', () => {
     });
 
     await test.step('Validate successful order completion', async () => {
+      await expect(page).toHaveURL(/checkout-complete/);
+
       await expect(checkoutPage.successMessage).toHaveText(
         'Thank you for your order!'
       );
-
-      await expect(page).toHaveURL(/checkout-complete/);
     });
   });
 });
