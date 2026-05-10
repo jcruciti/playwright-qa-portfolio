@@ -5,7 +5,7 @@ import { CheckoutPage } from '../../pages/CheckoutPage';
 
 const { buildUser } = require('../../utils/userFactory');
 
-test.describe('@e2e @smokeComplete Purchase Flow', () => {
+test.describe('@e2e @smoke Complete Purchase Flow', () => {
   let inventoryPage;
   let cartPage;
   let checkoutPage;
@@ -21,7 +21,9 @@ test.describe('@e2e @smokeComplete Purchase Flow', () => {
     await page.goto('/inventory.html');
   });
 
-  test('should complete purchase flow successfully', async ({ page }) => {
+  test('@critical should complete purchase flow successfully', async ({
+    page,
+  }) => {
     await test.step('Add product to cart', async () => {
       await inventoryPage.addProduct('sauce-labs-backpack');
 

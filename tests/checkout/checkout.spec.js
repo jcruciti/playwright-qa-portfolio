@@ -73,7 +73,7 @@ test.describe('@checkout @regression Checkout Flow', () => {
     });
   });
 
-  test('@regressionshould navigate back to cart page from checkout', async ({
+  test('@regression should navigate back to cart page from checkout', async ({
     page,
   }) => {
     await test.step('Cancel checkout process', async () => {
