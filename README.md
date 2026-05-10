@@ -337,13 +337,7 @@ npx playwright test --grep @checkout
 
 ---
 
-# 🚀 CI/CD Pipeline
-
-This project uses a multi-suite CI strategy with GitHub Actions, enabling isolated smoke and regression execution workflows.
-
----
-
-## ✅ Pipeline capabilities
+## 🚀 CI/CD Pipeline
 
 - Automatic execution on `push`
 - Automatic execution on `pull_request`
