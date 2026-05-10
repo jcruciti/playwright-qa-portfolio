@@ -1,3 +1,7 @@
+![Playwright](https://img.shields.io/badge/Playwright-E2E-green)
+![CI](https://img.shields.io/badge/CI-GitHub_Actions-blue)
+![Node](https://img.shields.io/badge/Node.js-20-green)
+
 # 🎭 Playwright QA Automation Portfolio
 
 End-to-end test automation project built with **Playwright** using the **Page Object Model (POM)** architecture to simulate real-world e-commerce user flows.
@@ -294,9 +298,48 @@ const defaultUser = {
 
 ---
 
+# 🏷️ Test Tagging Strategy
+
+This project uses Playwright test tags to support scalable test execution strategies.
+
+## Available tags
+
+- `@smoke`
+- `@regression`
+- `@checkout`
+- `@cart`
+- `@inventory`
+- `@auth`
+- `@e2e`
+- `@critical`
+
+---
+
+## Examples
+
+Run smoke tests:
+
+```bash
+npx playwright test --grep @smoke
+```
+
+Run regression suite:
+
+```bash
+npx playwright test --grep @regression
+```
+
+Run checkout tests only:
+
+```bash
+npx playwright test --grep @checkout
+```
+
+---
+
 # 🚀 CI/CD Pipeline
 
-This project includes a fully automated GitHub Actions pipeline.
+This project uses a multi-suite CI strategy with GitHub Actions, enabling isolated smoke and regression execution workflows.
 
 ---
 
@@ -391,9 +434,6 @@ jobs:
 - API testing layer with Playwright API
 - Visual regression testing
 - Retry strategy for flaky tests
-- Test tagging:
-  - `@smoke`
-  - `@regression`
 - Matrix execution strategy
 - Allure reporting integration
 
