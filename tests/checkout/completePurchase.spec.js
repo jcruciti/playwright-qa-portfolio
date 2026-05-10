@@ -5,7 +5,7 @@ import { CheckoutPage } from '../../pages/CheckoutPage';
 
 const { buildUser } = require('../../utils/userFactory');
 
-test.describe('Complete Purchase Flow', () => {
+test.describe('@e2e @smokeComplete Purchase Flow', () => {
   let inventoryPage;
   let cartPage;
   let checkoutPage;

@@ -4,7 +4,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
 import { CartPage } from '../pages/CartPage';
 
-test.describe('Inventory', () => {
+test.describe('@inventory @regression Inventory', () => {
   let login;
   let inventory;
 
@@ -19,13 +19,13 @@ test.describe('Inventory', () => {
     await page.goto('/inventory.html');
   });
 
-  test('should display list of available products', async () => {
+  test('@smoke should display list of available products', async () => {
     await test.step('Validate inventory list is displayed', async () => {
       await expect(inventory.getInventoryItem()).not.toHaveCount(0);
     });
   });
 
-  test('should add product to cart', async ({ page }) => {
+  test('@smoke should add product to cart', async ({ page }) => {
     await test.step('Add product to cart', async () => {
       await inventory.addProduct('sauce-labs-backpack');
     });
@@ -39,7 +39,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should remove product from cart', async () => {
+  test('@regression should remove product from cart', async () => {
     await test.step('Add product to cart', async () => {
       await inventory.addProduct('sauce-labs-backpack');
     });
@@ -57,7 +57,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should redirect to shopping cart', async ({ page }) => {
+  test('@regression should redirect to shopping cart', async ({ page }) => {
     const cartPage = new CartPage(page);
 
     await test.step('Open shopping cart page', async () => {
@@ -71,7 +71,9 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should persist cart data after page reload', async ({ page }) => {
+  test('@regression should persist cart data after page reload', async ({
+    page,
+  }) => {
     await test.step('Add product to cart', async () => {
       await inventory.addProduct('sauce-labs-backpack');
     });
@@ -87,7 +89,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should persist cart data after login session restart', async ({
+  test('@regression should persist cart data after login session restart', async ({
     page,
   }) => {
     await test.step('Add product to cart', async () => {
@@ -113,7 +115,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should sort products A to Z correctly', async () => {
+  test('@regression should sort products A to Z correctly', async () => {
     let itemsLocator;
 
     await test.step('Sort products from A to Z', async () => {
@@ -129,7 +131,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should sort products Z to A correctly', async () => {
+  test('@regression should sort products Z to A correctly', async () => {
     let itemsLocator;
 
     await test.step('Sort products from Z to A', async () => {
@@ -145,7 +147,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should sort prices low to high', async () => {
+  test('@regression should sort prices low to high', async () => {
     let itemsLocator;
 
     await test.step('Sort prices from low to high', async () => {
@@ -161,7 +163,7 @@ test.describe('Inventory', () => {
     });
   });
 
-  test('should sort prices high to low', async () => {
+  test('@regression should sort prices high to low', async () => {
     let itemsLocator;
 
     await test.step('Sort prices from high to low', async () => {

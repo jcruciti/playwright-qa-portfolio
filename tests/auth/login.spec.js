@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
 
-test.describe('Login', () => {
+test.describe('@auth @regression Login', () => {
   let loginPage;
 
   const USER = process.env.SAUCE_USER;
@@ -18,7 +18,9 @@ test.describe('Login', () => {
     await loginPage.open();
   });
 
-  test('should login successfully with valid credentials', async ({ page }) => {
+  test('@smoke should login successfully with valid credentials', async ({
+    page,
+  }) => {
     await test.step('Login with valid credentials', async () => {
       await loginPage.login(USER, PASSWORD);
     });
@@ -28,7 +30,7 @@ test.describe('Login', () => {
     });
   });
 
-  test('should display error message using invalid credentials', async () => {
+  test('@regression should display error message using invalid credentials', async () => {
     await test.step('Login with invalid credentials', async () => {
       await loginPage.login(INVALID_USER.username, INVALID_USER.password);
     });

@@ -12,7 +12,44 @@ on:
       - master
 
 jobs:
-  test:
+  smoke-tests:
+    name: Smoke Tests
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+
+    env:
+      SAUCE_USER: ${{ secrets.SAUCE_USER }}
+      SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run smoke tests
+        run: npx playwright test --grep @smoke
+
+      - name: Upload Smoke Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-smoke-report
+          path: playwright-report/
+          retention-days: 30
+
+  regression-tests:
+    name: Regression Tests
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     timeout-minutes: 30
     runs-on: ubuntu-latest
 
@@ -30,18 +67,18 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: npx playwright test
+      - name: Run regression tests
+        run: npx playwright test --grep @regression
 
-      - name: Upload Playwright Report
+      - name: Upload Regression Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
+          name: playwright-regression-report
           path: playwright-report/
           retention-days: 30

@@ -5,7 +5,7 @@ import { CheckoutPage } from '../../pages/CheckoutPage';
 
 const { buildUser } = require('../../utils/userFactory');
 
-test.describe('Checkout Flow', () => {
+test.describe('@checkout @regression Checkout Flow', () => {
   let inventoryPage;
   let cartPage;
   let checkoutPage;
@@ -52,7 +52,9 @@ test.describe('Checkout Flow', () => {
     });
   });
 
-  test('should verify calculated sum matches UI total', async ({ page }) => {
+  test('@regression should verify calculated sum matches UI total', async ({
+    page,
+  }) => {
     await test.step('Fill checkout information', async () => {
       await checkoutPage.completeStepOne(user);
     });
@@ -71,7 +73,9 @@ test.describe('Checkout Flow', () => {
     });
   });
 
-  test('should navigate back to cart page from checkout', async ({ page }) => {
+  test('@regressionshould navigate back to cart page from checkout', async ({
+    page,
+  }) => {
     await test.step('Cancel checkout process', async () => {
       await checkoutPage.cancelOrder();
     });
@@ -83,7 +87,7 @@ test.describe('Checkout Flow', () => {
     });
   });
 
-  test('should navigate to checkout step two', async ({ page }) => {
+  test('@smoke should navigate to checkout step two', async ({ page }) => {
     await test.step('Fill checkout information', async () => {
       await checkoutPage.completeStepOne(user);
     });
@@ -95,7 +99,7 @@ test.describe('Checkout Flow', () => {
     });
   });
 
-  test.describe('Checkout required fields validation', () => {
+  test.describe('@validation Checkout required fields validation', () => {
     const cases = [
       {
         field: 'First Name',
@@ -127,7 +131,7 @@ test.describe('Checkout Flow', () => {
     ];
 
     for (const { field, data, message } of cases) {
-      test(`should validate ${field} is required`, async () => {
+      test(`@regression should validate ${field} is required`, async () => {
         const invalidUser = buildUser(data);
 
         await test.step(`Fill checkout form without ${field}`, async () => {
@@ -147,7 +151,7 @@ test.describe('Checkout Flow', () => {
     }
   });
 
-  test('should redirect to shopping cart', async ({ page }) => {
+  test('@regression should redirect to shopping cart', async ({ page }) => {
     await test.step('Cancel checkout and return to cart', async () => {
       await checkoutPage.cancelOrder();
     });
@@ -159,7 +163,7 @@ test.describe('Checkout Flow', () => {
     });
   });
 
-  test('should finish the order', async ({ page }) => {
+  test('@smoke should finish the order', async ({ page }) => {
     await test.step('Fill checkout information', async () => {
       await checkoutPage.completeStepOne(user);
     });

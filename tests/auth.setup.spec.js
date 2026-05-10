@@ -3,7 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 
 const authFile = 'playwright/.auth/user.json';
 
-setup('authenticate', async ({ page }) => {
+setup('@setupauthenticate', async ({ page }) => {
   const loginPage = new LoginPage(page);
 
   await loginPage.open();

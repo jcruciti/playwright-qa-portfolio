@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { InventoryPage } from '../../pages/InventoryPage';
 import { CartPage } from '../../pages/CartPage';
 
-test.describe('Shopping Cart', () => {
+test.describe('@cart @regression Shopping Cart', () => {
   let inventoryPage;
   let cartPage;
 
@@ -20,7 +20,7 @@ test.describe('Shopping Cart', () => {
     await page.goto('/inventory.html');
   });
 
-  test('should display the correct cart badge quantity', async () => {
+  test('@smoke should display the correct cart badge quantity', async () => {
     await test.step('Add products to cart', async () => {
       await inventoryPage.addProducts(PRODUCTS);
     });
@@ -42,7 +42,7 @@ test.describe('Shopping Cart', () => {
     });
   });
 
-  test('should remove product from cart', async () => {
+  test('@regression should remove product from cart', async () => {
     const productToRemove = 'test.allthethings()-t-shirt-(red)';
 
     const removedProductName = 'Test.allTheThings() T-Shirt (Red)';
@@ -82,7 +82,9 @@ test.describe('Shopping Cart', () => {
     });
   });
 
-  test('should navigate back to inventory page from cart', async ({ page }) => {
+  test('@regression should navigate back to inventory page from cart', async ({
+    page,
+  }) => {
     await test.step('Open cart page', async () => {
       await inventoryPage.openCart();
     });
@@ -98,7 +100,7 @@ test.describe('Shopping Cart', () => {
     });
   });
 
-  test('should go to checkout page', async ({ page }) => {
+  test('@smoke should go to checkout page', async ({ page }) => {
     await test.step('Add products to cart', async () => {
       await inventoryPage.addProducts(PRODUCTS);
     });
@@ -116,7 +118,7 @@ test.describe('Shopping Cart', () => {
     });
   });
 
-  test('should show empty cart when no items are added', async () => {
+  test('@regression should show empty cart when no items are added', async () => {
     await test.step('Open cart page', async () => {
       await inventoryPage.openCart();
     });
