@@ -1,4 +1,8 @@
-name: Playwright Tests
+name: Playwright Cross-Browser Automation
+
+concurrency:
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   push:
@@ -13,9 +17,12 @@ on:
 
 jobs:
   smoke-tests:
-    name: Smoke Tests
+    name: Cross-Browser Smoke Suite
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
 
     env:
       SAUCE_USER: ${{ secrets.SAUCE_USER }}
@@ -29,6 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -37,18 +45,19 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run smoke tests
-        run: npx playwright test --grep @smoke
+        run: npx playwright test --project=${{ matrix.browser }} --grep @smoke
 
       - name: Upload Smoke Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-smoke-report
+          name: playwright-smoke-report-${{ matrix.browser }}
           path: playwright-report/
           retention-days: 30
 
   regression-tests:
-    name: Regression Tests
+    name: Full Regression Suite
+    needs: smoke-tests
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -65,6 +74,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -79,6 +89,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-regression-report
+          name: full-regression-report
           path: playwright-report/
           retention-days: 30
