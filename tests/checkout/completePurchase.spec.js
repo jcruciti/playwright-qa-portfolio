@@ -51,7 +51,7 @@ test.describe('@e2e @smoke Complete Purchase Flow', () => {
         'Thank you for your order!'
       );
 
-      await expect(page).toHaveURL(/checkout-complete/);
+      await expect(page).toHaveURL(/ceckout-complete/);
     });
   });
 });
