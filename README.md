@@ -2,9 +2,9 @@
 ![CI](https://img.shields.io/badge/CI-GitHub_Actions-blue)
 ![Node](https://img.shields.io/badge/Node.js-20-green)
 
-# 🎭 Playwright QA Automation Portfolio
+# 🎭 Playwright E2E Automation Framework
 
-End-to-end test automation project built with **Playwright** using the **Page Object Model (POM)** architecture to simulate real-world e-commerce user flows.
+Scalable end-to-end test automation framework built with **Playwright** using the **Page Object Model (POM)** architecture to simulate real-world e-commerce user flows.
 
 🔗 Application under test: https://www.saucedemo.com/
 
@@ -12,23 +12,23 @@ End-to-end test automation project built with **Playwright** using the **Page Ob
 
 # 📌 Project Overview
 
-This project demonstrates real-world QA Automation skills focused on scalable and maintainable test architecture.
+This project demonstrates modern QA Automation practices focused on scalability, maintainability, cross-browser execution, and CI/CD integration.
 
 ## Key capabilities demonstrated
 
-- End-to-end UI testing
+- End-to-end UI automation
 - Functional and regression testing
+- Cross-browser execution (Chromium, Firefox, WebKit)
 - Page Object Model (POM)
-- Test data generation with Faker
-- 🔐 Session management using Playwright `storageState`
+- Persistent authentication using Playwright `storageState`
 - Cart persistence validation
 - Checkout flow validation
-- Business logic validation (pricing, totals)
-- Cross-browser testing (Chromium, Firefox, WebKit)
+- Business logic validation (pricing and totals)
+- Dynamic test data generation with Faker
 - Automated CI pipeline with GitHub Actions
-- Secure environment variable management using GitHub Secrets
-- Automatic Playwright HTML report artifact generation
-- CI/CD-ready structure
+- Secure credential handling with GitHub Secrets
+- Automated Playwright HTML report generation
+- CI/CD-ready architecture
 
 ---
 
@@ -38,8 +38,8 @@ This project demonstrates real-world QA Automation skills focused on scalable an
 
 - Valid login authentication
 - Invalid login validation
-- Error message handling
-- Session management via `storageState`
+- Error message validation
+- Persistent session handling via `storageState`
 
 ---
 
@@ -47,7 +47,7 @@ This project demonstrates real-world QA Automation skills focused on scalable an
 
 - Product listing validation
 - Add/remove products from cart
-- Cart badge validation
+- Cart badge synchronization
 - Cart persistence across sessions
 - Sorting validation:
   - A → Z
@@ -70,11 +70,11 @@ This project demonstrates real-world QA Automation skills focused on scalable an
 ## 💳 Checkout
 
 - Complete checkout workflow
-- Required field validations
+- Required field validation
 - Checkout step navigation
 - Subtotal calculation validation
 - Order completion validation
-- Success confirmation message
+- Success confirmation validation
 
 ---
 
@@ -99,38 +99,60 @@ PLAYWRIGHT-QA-PORTFOLIO
 │   └── workflows/
 │       └── playwright.yml
 │
+├── .vscode/
+│   └── settings.json
+│
+├── api/
+│   ├── auth/
+│   ├── users/
+│   └── utils/
+│
+├── assets/
+│
+├── auth/
+│
+├── docs/
+│
+├── fixtures/
+│
+├── node_modules/
+│
 ├── pages/
 │   ├── CartPage.js
 │   ├── CheckoutPage.js
 │   ├── InventoryPage.js
 │   └── LoginPage.js
 │
+├── playwright/
+│
+├── playwright-report/
+│
+├── test-results/
+│
 ├── tests/
 │   ├── auth/
 │   ├── cart/
+│   │   └── cart.spec.js
+│   │
 │   ├── checkout/
+│   │   ├── checkout.spec.js
+│   │   └── completePurchase.spec.js
+│   │
 │   ├── setup/
-│   │   └── auth.setup.js
+│   │
+│   ├── auth.setup.spec.js
 │   └── inventory.spec.js
 │
 ├── utils/
-│   ├── auth/
-│   │   └── getAuthState.js
-│   ├── assertSorted.js
-│   └── userFactory.js
-│
-├── docs/
-│   └── test-cases/
-│
-├── playwright/.auth/
-│   └── user.json
-│
-├── playwright-report/
-├── test-results/
 │
 ├── .env
-├── playwright.config.js
+├── .eslintignore
+├── .eslintrc.cjs
+├── .gitignore
+├── .prettierrc
+├── package-lock.json
 ├── package.json
+├── playwright.config.js
 └── README.md
 ```
 
@@ -158,7 +180,7 @@ npx playwright install
 
 ## Create `.env`
 
-```env
+```bash
 SAUCE_USER=standard_user
 SAUCE_PASSWORD=secret_sauce
 ```
@@ -191,17 +213,33 @@ npx playwright test --ui
 
 ---
 
-## Run specific folder
+## Run smoke suite
 
 ```bash
-npx playwright test tests/checkout
+npx playwright test --grep @smoke
+```
+
+---
+
+## Run regression suite
+
+```bash
+npx playwright test --grep @regression
+```
+
+---
+
+## Run checkout tests only
+
+```bash
+npx playwright test --grep @checkout
 ```
 
 ---
 
 # 📊 Reports
 
-## Open HTML report
+## Open Playwright HTML Report
 
 ```bash
 npx playwright show-report
@@ -221,18 +259,19 @@ playwright-report/
 
 ## ✅ Page Object Model (POM)
 
-### Benefits
+This framework uses the Page Object Model architecture to improve:
 
 - Reusability
 - Maintainability
 - Separation of concerns
 - Scalability
+- Readability
 
 ---
 
 # 🔐 Authentication Strategy
 
-This project evolved from UI-based login in `beforeEach` to persistent authentication using Playwright `storageState`.
+This project evolved from repetitive UI login execution in `beforeEach` to persistent authentication using Playwright `storageState`.
 
 ---
 
@@ -266,7 +305,7 @@ storageState: 'playwright/.auth/user.json';
 
 - Faster execution
 - More stable tests
-- Less UI dependency
+- Reduced UI dependency
 - Better CI performance
 - Cleaner test isolation
 
@@ -284,23 +323,24 @@ const defaultUser = {
 
 ---
 
-# 🔧 Best Practices
+# 🔧 Best Practices Implemented
 
-- POM architecture
-- Centralized authentication via `storageState`
+- Page Object Model architecture
+- Persistent authentication via `storageState`
 - Test isolation
-- Clean assertions
-- Environment variables
 - Stable selectors
-- Modular structure
+- Modular framework structure
+- Environment variable management
 - Reusable setup architecture
+- Cross-browser execution
 - CI/CD integration
+- HTML reporting
 
 ---
 
 # 🏷️ Test Tagging Strategy
 
-This project uses Playwright test tags to support scalable test execution strategies.
+This project uses Playwright test tags to support scalable execution pipelines.
 
 ## Available tags
 
@@ -315,101 +355,71 @@ This project uses Playwright test tags to support scalable test execution strate
 
 ---
 
-## Examples
+# 🚀 CI/CD Pipeline
 
-Run smoke tests:
-
-```bash
-npx playwright test --grep @smoke
-```
-
-Run regression suite:
-
-```bash
-npx playwright test --grep @regression
-```
-
-Run checkout tests only:
-
-```bash
-npx playwright test --grep @checkout
-```
-
----
-
-## 🚀 CI/CD Pipeline
+This project includes a GitHub Actions pipeline with:
 
 - Automatic execution on `push`
 - Automatic execution on `pull_request`
 - Cross-browser execution
+- Smoke and regression suite separation
 - Secure credential handling
-- HTML report artifact upload
-- Linux CI execution
+- Playwright HTML report artifact upload
+- Parallelized browser execution
+- Pipeline concurrency control
+- Linux-based CI execution
 
 ---
 
-## 📄 GitHub Actions Workflow
+# 📊 CI/CD Workflow Features
 
-```yaml
-name: Playwright Tests
+- Chromium execution
+- Firefox execution
+- WebKit execution
+- Artifact retention
+- Automated HTML reports
+- Matrix execution strategy
+- GitHub Secrets integration
+- npm dependency caching
 
-on:
-  push:
-    branches:
-      - main
-      - master
+---
 
-  pull_request:
-    branches:
-      - main
-      - master
+# 📸 CI/CD Pipeline Preview
 
-jobs:
-  test:
-    timeout-minutes: 30
-    runs-on: ubuntu-latest
+Add your GitHub Actions screenshot here:
 
-    env:
-      SAUCE_USER: ${{ secrets.SAUCE_USER }}
-      SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
+```bash
+docs/images/github-actions-pipeline.png
+```
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+```md
+![CI Pipeline](./docs/images/github-actions-pipeline.png)
+```
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+---
 
-      - name: Install dependencies
-        run: npm install
+# 📸 Playwright HTML Report Preview
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+Add your Playwright HTML report screenshot here:
 
-      - name: Run Playwright tests
-        run: npx playwright test
+```bash
+docs/images/playwright-report.png
+```
 
-      - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+```md
+![Playwright Report](./docs/images/playwright-report.png)
 ```
 
 ---
 
 # 💡 Highlights
 
+- Persistent authentication via `storageState`
 - Cart persistence validation
-- Session handling via `storageState`
 - Checkout flow validation
-- Subtotal calculation verification
+- Business logic verification
 - Cross-browser execution
-- End-to-end automation
+- Scalable automation architecture
 - Automated CI execution
 - GitHub Actions integration
 
@@ -418,22 +428,22 @@ jobs:
 # 🚀 CI/CD Ready
 
 - GitHub Actions compatible
-- Jenkins ready
-- Docker-ready structure
+- Jenkins-ready structure
+- Docker-ready architecture
 
 ---
 
-# 📈 Future Improvements
+# 📈 Roadmap
 
-- API testing layer with Playwright API
-- Visual regression testing
-- Retry strategy for flaky tests
-- Matrix execution strategy
-- Allure reporting integration
+- Playwright API integration
+- Visual regression validation
+- Advanced reporting integration
+- Docker execution support
+- Parallel execution optimization
 
 ---
 
 # 👨‍💻 Author
 
 Joe Cruciti  
-QA Automation Engineer | Portfolio Project
+QA Automation Engineer
